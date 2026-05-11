@@ -1,0 +1,380 @@
+<!DOCTYPE html><html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dealer Portal Transformation</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#090d0e;--bg2:#0e1416;--bg3:#141d1f;--card:#0e1a1c;--border:#1a2e30;--txt:#dff4f4;--txt2:#8ab8bc;--txt3:#527478;--accent:#00c9c8;--accent2:#00e5b0;--warn:#f59e0b;--danger:#ef4444;--ok:#22c55e;--purple:#a78bfa}
+body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans-serif;font-size:12px;min-height:100vh}
+
+/* HEADER */
+.header{background:var(--bg2);border-bottom:1px solid var(--border);padding:18px 32px 14px}
+.header-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px}
+.logo{font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+.header h1{font-size:1.5rem;font-weight:700;letter-spacing:-.02em;margin-bottom:4px}
+.header h1 span{color:var(--accent)}
+.header-sub{font-size:13px;color:var(--txt2)}
+.header-chips{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.chip{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid}
+.chip-a{background:#051e1e;color:var(--accent);border-color:#0a4040}
+.chip-g{background:#052010;color:var(--ok);border-color:#0a3820}
+.chip-p{background:#1a1530;color:var(--purple);border-color:#2a2050}
+.chip-w{background:#1c1205;color:var(--warn);border-color:#3a2a0a}
+
+/* LAYOUT */
+.body{padding:20px 32px;display:flex;flex-direction:column;gap:20px}
+
+/* KPI BANNER */
+.kpi-banner{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;position:relative;overflow:hidden;transition:transform .2s,border-color .2s;cursor:default}
+.kpi:hover{transform:translateY(-2px);border-color:var(--accent)}
+.kpi::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px}
+.kpi.a::after{background:var(--accent)}
+.kpi.g::after{background:var(--accent2)}
+.kpi.p::after{background:var(--purple)}
+.kpi.w::after{background:var(--warn)}
+.kpi.o::after{background:#f97316}
+.kpi-label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--txt3);margin-bottom:6px}
+.kpi-before{font-size:11px;color:var(--txt3);margin-bottom:2px}
+.kpi-arrow{font-size:18px;color:var(--border);margin:2px 0;line-height:1}
+.kpi-after{font-size:1.6rem;font-weight:700;line-height:1;margin-bottom:4px}
+.kpi.a .kpi-after{color:var(--accent)}
+.kpi.g .kpi-after{color:var(--accent2)}
+.kpi.p .kpi-after{color:var(--purple)}
+.kpi.w .kpi-after{color:var(--warn)}
+.kpi.o .kpi-after{color:#f97316}
+.kpi-delta{font-size:10px;color:var(--ok);font-weight:600}
+.kpi-period{font-size:10px;color:var(--txt3)}
+
+/* SECTION */
+.section-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);font-weight:700;margin-bottom:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.grid21{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.card-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--txt);margin-bottom:2px}
+.card-sub{font-size:10px;color:var(--txt3);margin-bottom:10px}
+.badge{padding:2px 8px;border-radius:10px;font-size:9px;font-weight:700}
+.b-ok{background:#052010;color:var(--ok)}
+.b-i{background:#051e1e;color:var(--accent)}
+.b-p{background:#1a1530;color:var(--purple)}
+.b-w{background:#1c1205;color:var(--warn)}
+
+/* TIMELINE */
+.journey{position:relative;padding:28px 0 8px}
+.journey-track{position:absolute;top:38px;left:40px;right:40px;height:3px;background:var(--border);border-radius:2px}
+.journey-fill{position:absolute;top:38px;left:40px;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;width:0;transition:width 1.2s ease}
+.journey-phases{display:flex;justify-content:space-between;position:relative;padding:0 30px}
+.phase{display:flex;flex-direction:column;align-items:center;gap:0;width:100px;cursor:pointer}
+.phase-dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);background:var(--bg);z-index:1;transition:all .3s;flex-shrink:0}
+.phase-dot.done{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 4px rgba(0,201,200,.15)}
+.phase-dot.live{background:var(--accent2);border-color:var(--accent2);box-shadow:0 0 0 6px rgba(0,229,176,.15);animation:pulse 1.8s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 6px rgba(0,229,176,.15)}50%{box-shadow:0 0 0 10px rgba(0,229,176,.05)}}
+.phase-label{font-size:10px;font-weight:600;color:var(--txt2);text-align:center;margin-top:8px;line-height:1.3}
+.phase-date{font-size:9px;color:var(--txt3);margin-top:2px}
+.phase-kpis{font-size:9px;color:var(--accent);text-align:center;margin-top:3px;line-height:1.4}
+.phase-detail{margin-top:10px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:10px 12px;display:none;font-size:11px;color:var(--txt2);line-height:1.55}
+.phase-detail.open{display:block}
+.phase-detail strong{color:var(--txt);display:block;margin-bottom:4px}
+
+/* CAPABILITY CARDS */
+.cap-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.cap-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;transition:border-color .2s,transform .2s;cursor:default}
+.cap-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.cap-icon{font-size:20px;margin-bottom:6px}
+.cap-title{font-size:11px;font-weight:600;color:var(--txt);margin-bottom:3px}
+.cap-desc{font-size:10px;color:var(--txt3);line-height:1.45}
+.cap-impact{font-size:10px;color:var(--accent2);margin-top:5px;font-weight:600}
+
+/* REGION MAP */
+.region-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.region{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:10px 8px;text-align:center;transition:border-color .2s}
+.region:hover{border-color:var(--accent)}
+.region-name{font-size:10px;font-weight:600;color:var(--txt);margin-bottom:4px}
+.region-count{font-size:1.3rem;font-weight:700;color:var(--accent);line-height:1}
+.region-rev{font-size:10px;color:var(--accent2);margin-top:2px}
+.region-bar{height:3px;border-radius:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));margin-top:6px}
+
+/* NPS GAUGE */
+.nps-wrap{display:flex;align-items:center;gap:20px}
+.gauge-wrap{position:relative;width:140px;height:80px;flex-shrink:0}
+.gauge-label{font-size:10px;color:var(--txt3);text-align:center;margin-top:4px}
+
+/* ADOPTION TABLE */
+.adopt-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #0f1e20}
+.adopt-row:last-child{border-bottom:none}
+.adopt-feature{font-size:11px;color:var(--txt2);flex:1}
+.adopt-bar-wrap{flex:1;height:5px;background:var(--bg3);border-radius:3px}
+.adopt-bar{height:5px;border-radius:3px;transition:width .6s}
+.adopt-pct{font-size:10px;font-weight:600;color:var(--txt);width:36px;text-align:right}
+.adopt-delta{font-size:10px;color:var(--ok);width:40px;text-align:right}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <span class="logo">CUMMINS · Power Systems</span>
+    <span style="font-size:11px;color:var(--txt3)">B2B Dealer Portal · Jan 2018 – Jun 2019</span>
+  </div>
+  <h1>Dealer Portal <span>Transformation Story</span></h1>
+      <div class="header-sub">From fragmented dealer experience to a unified B2B platform — 18 months, 5 regions, $70M channel growth</div>
+  <div class="header-chips">
+    <span class="chip chip-a">$20M → $90M Revenue</span>
+    <span class="chip chip-g">150 → 1,047 Dealers</span>
+    <span class="chip chip-p">NPS 4.5 → 8.2</span>
+    <span class="chip chip-w">5 Regions · NA</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- KPI BANNER -->
+  <div>
+    <div class="section-label">Transformation at a Glance — 18 Months</div>
+    <div class="kpi-banner">
+      <div class="kpi g">
+        <div class="kpi-label">Channel Revenue</div>
+        <div class="kpi-before">Before: $20M</div>
+        <div class="kpi-arrow">↓</div>
+        <div class="kpi-after">$90M</div>
+        <div class="kpi-delta">▲ 4.5× growth</div>
+        <div class="kpi-period">18 months</div>
+      </div>
+      <div class="kpi a">
+        <div class="kpi-label">Active Dealers</div>
+        <div class="kpi-before">Before: 150</div>
+        <div class="kpi-arrow">↓</div>
+        <div class="kpi-after">1,047</div>
+        <div class="kpi-delta">▲ 6.9× growth</div>
+        <div class="kpi-period">5 regions · NA</div>
+      </div>
+      <div class="kpi p">
+        <div class="kpi-label">Dealer NPS</div>
+        <div class="kpi-before">Before: 4.5</div>
+        <div class="kpi-arrow">↓</div>
+        <div class="kpi-after">8.2</div>
+        <div class="kpi-delta">▲ +3.7 points</div>
+        <div class="kpi-period">+82% improvement</div>
+      </div>
+      <div class="kpi w">
+        <div class="kpi-label">Avg Revenue / Dealer</div>
+        <div class="kpi-before">Before: ~$133K</div>
+        <div class="kpi-arrow">↓</div>
+        <div class="kpi-after">$86K</div>
+        <div class="kpi-delta">↑ More dealers, scaling</div>
+        <div class="kpi-period">Density growing</div>
+      </div>
+      <div class="kpi o">
+        <div class="kpi-label">Portal Adoption</div>
+        <div class="kpi-before">Before: 0%</div>
+        <div class="kpi-arrow">↓</div>
+        <div class="kpi-after">84%</div>
+        <div class="kpi-delta">▲ Active dealers</div>
+        <div class="kpi-period">Month 18</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JOURNEY TIMELINE -->
+  <div class="card">
+    <div class="card-title">18-Month Transformation Journey</div>
+    <div class="card-sub">Click each phase to expand — milestones, capabilities shipped, and metrics unlocked</div>
+    <div class="journey">
+      <div class="journey-track"></div>
+      <div class="journey-fill" id="j-fill"></div>
+      <div class="journey-phases">
+        <div class="phase" onclick="expandPhase(0)">
+          <div class="phase-dot done" id="pd0"></div>
+          <div class="phase-label">Discovery &amp; Design</div>
+          <div class="phase-date">Jan–Mar '18</div>
+          <div class="phase-kpis">150 dealers · $20M</div>
+        </div>
+        <div class="phase" onclick="expandPhase(1)">
+          <div class="phase-dot done" id="pd1"></div>
+          <div class="phase-label">Core Portal Build</div>
+          <div class="phase-date">Apr–Jun '18</div>
+          <div class="phase-kpis">Onboarding + Marketing</div>
+        </div>
+        <div class="phase" onclick="expandPhase(2)">
+          <div class="phase-dot done" id="pd2"></div>
+          <div class="phase-label">CRM &amp; Quote Integration</div>
+          <div class="phase-date">Jul–Sep '18</div>
+          <div class="phase-kpis">400 dealers · $42M run-rate</div>
+        </div>
+        <div class="phase" onclick="expandPhase(3)">
+          <div class="phase-dot done" id="pd3"></div>
+          <div class="phase-label">Ordering &amp; Fulfilment</div>
+          <div class="phase-date">Oct–Dec '18</div>
+          <div class="phase-kpis">700 dealers · $65M run-rate</div>
+        </div>
+        <div class="phase" onclick="expandPhase(4)">
+          <div class="phase-dot done" id="pd4"></div>
+          <div class="phase-label">Scale &amp; Optimise</div>
+          <div class="phase-date">Jan–Jun '19</div>
+          <div class="phase-kpis">1,047 dealers · $90M</div>
+        </div>
+        <div class="phase" onclick="expandPhase(5)">
+          <div class="phase-dot live" id="pd5"></div>
+          <div class="phase-label">Steady State</div>
+          <div class="phase-date">Jun '19 →</div>
+          <div class="phase-kpis">NPS 8.2 · 84% adoption</div>
+        </div>
+      </div>
+    </div>
+    <div id="phase-detail" class="phase-detail"></div>
+  </div>
+
+  <!-- CHARTS ROW -->
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">Revenue Growth — $M Monthly Run-Rate</div>
+      <div class="card-sub">Channel revenue · Baseline $20M annualized · 18 months</div>
+      <canvas id="c-rev" height="130"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-title">Dealer Onboarding — Cumulative Count</div>
+      <div class="card-sub">Portal-activated dealers · 5 regions · Target 1,000</div>
+      <canvas id="c-dealers" height="130"></canvas>
+    </div>
+  </div>
+
+  <div class="grid21">
+    <div class="card">
+      <div class="card-title">NPS &amp; Portal Adoption — Monthly Trend</div>
+      <div class="card-sub">Dealer satisfaction score (0–10) and % active portal users over 18 months</div>
+      <canvas id="c-nps" height="110"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-title">Feature Adoption at Month 18</div>
+      <div class="card-sub">% of active dealers using each capability</div>
+      <div style="margin-top:6px">
+        <div class="adopt-row"><span class="adopt-feature">Marketing & Content Hub</span><div class="adopt-bar-wrap"><div class="adopt-bar" style="width:92%;background:var(--accent)"></div></div><span class="adopt-pct">92%</span><span class="adopt-delta">+92pp</span></div>
+        <div class="adopt-row"><span class="adopt-feature">Automated Onboarding</span><div class="adopt-bar-wrap"><div class="adopt-bar" style="width:88%;background:var(--accent)"></div></div><span class="adopt-pct">88%</span><span class="adopt-delta">+88pp</span></div>
+        <div class="adopt-row"><span class="adopt-feature">CRM Lead Access</span><div class="adopt-bar-wrap"><div class="adopt-bar" style="width:84%;background:var(--accent2)"></div></div><span class="adopt-pct">84%</span><span class="adopt-delta">+84pp</span></div>
+        <div class="adopt-row"><span class="adopt-feature">Quote-to-Order (CPQ)</span><div class="adopt-bar-wrap"><div class="adopt-bar" style="width:79%;background:var(--accent2)"></div></div><span class="adopt-pct">79%</span><span class="adopt-delta">+79pp</span></div>
+        <div class="adopt-row"><span class="adopt-feature">Automated Ordering</span><div class="adopt-bar-wrap"><div class="adopt-bar" style="width:74%;background:var(--purple)"></div></div><span class="adopt-pct">74%</span><span class="adopt-delta">+74pp</span></div>
+        <div class="adopt-row"><span class="adopt-feature">Order Tracking</span><div class="adopt-bar-wrap"><div class="adopt-bar" style="width:68%;background:var(--purple)"></div></div><span class="adopt-pct">68%</span><span class="adopt-delta">+68pp</span></div>
+        <div class="adopt-row"><span class="adopt-feature">Fulfilment Integration</span><div class="adopt-bar-wrap"><div class="adopt-bar" style="width:61%;background:var(--warn)"></div></div><span class="adopt-pct">61%</span><span class="adopt-delta">+61pp</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAPABILITIES -->
+  <div>
+    <div class="section-label">Portal Capabilities Shipped</div>
+    <div class="cap-grid">
+      <div class="cap-card">
+        <div class="cap-icon">🗂️</div>
+        <div class="cap-title">Marketing & Content Hub</div>
+        <div class="cap-desc">Single source of truth for product specs, marketing materials, pricing guides, and service bulletins. Replaced email and SharePoint chaos.</div>
+        <div class="cap-impact">↑ 92% dealer adoption</div>
+      </div>
+      <div class="cap-card">
+        <div class="cap-icon">⚡</div>
+        <div class="cap-title">Automated Onboarding</div>
+        <div class="cap-desc">Self-service dealer registration, credentialing, and access provisioning. Reduced onboarding time from 3 weeks to 2 days. Scaled to 1,000+ dealers.</div>
+        <div class="cap-impact">6.9× dealer growth in 18 mo</div>
+      </div>
+      <div class="cap-card">
+        <div class="cap-icon">🎯</div>
+        <div class="cap-title">CRM Lead Access & Quote</div>
+        <div class="cap-desc">Direct access to assigned leads from Salesforce CRM. One-click quote generation via CPQ integration — from lead to quote in under 10 minutes.</div>
+        <div class="cap-impact">Lead-to-quote in &lt;10 min</div>
+      </div>
+      <div class="cap-card">
+        <div class="cap-icon">📦</div>
+        <div class="cap-title">Automated Ordering & Tracking</div>
+        <div class="cap-desc">Quote-to-order conversion with real-time order status, fulfilment integration, and delivery tracking. Eliminated manual order entry and follow-up calls.</div>
+        <div class="cap-impact">Enabled $70M incremental rev</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REGIONAL BREAKDOWN -->
+  <div>
+    <div class="section-label">Regional Dealer Distribution — 5 NA Regions</div>
+    <div class="region-grid">
+      <div class="region">
+        <div class="region-name">Northeast</div>
+        <div class="region-count">247</div>
+        <div class="region-rev">$22.4M</div>
+        <div class="region-bar" style="width:94%"></div>
+      </div>
+      <div class="region">
+        <div class="region-name">Southeast</div>
+        <div class="region-count">218</div>
+        <div class="region-rev">$19.8M</div>
+        <div class="region-bar" style="width:84%"></div>
+      </div>
+      <div class="region">
+        <div class="region-name">Midwest</div>
+        <div class="region-count">204</div>
+        <div class="region-rev">$18.6M</div>
+        <div class="region-bar" style="width:78%"></div>
+      </div>
+      <div class="region">
+        <div class="region-name">Southwest</div>
+        <div class="region-count">196</div>
+        <div class="region-rev">$17.1M</div>
+        <div class="region-bar" style="width:75%"></div>
+      </div>
+      <div class="region">
+        <div class="region-name">West</div>
+        <div class="region-count">182</div>
+        <div class="region-rev">$12.1M</div>
+        <div class="region-bar" style="width:70%"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+Chart.defaults.color='#527478';
+Chart.defaults.borderColor='#1a2e30';
+Chart.defaults.font.family='Segoe UI, system-ui, sans-serif';
+Chart.defaults.font.size=10;
+
+const mo18=['Jan\'18','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan\'19','Feb','Mar','Apr','May','Jun'];
+
+// Revenue
+new Chart(document.getElementById('c-rev'),{type:'line',data:{labels:mo18,datasets:[
+  {label:'Channel Revenue ($M/mo)',data:[1.67,1.72,1.75,1.90,2.10,2.40,3.20,3.80,4.40,5.10,5.60,6.00,6.40,6.80,7.00,7.20,7.40,7.50],borderColor:'#00e5b0',backgroundColor:'rgba(0,229,176,.1)',borderWidth:2.5,tension:.4,pointRadius:2.5,pointBackgroundColor:'#00e5b0',fill:true},
+  {label:'Baseline ($1.67M)',data:Array(18).fill(1.67),borderColor:'#527478',borderWidth:1,borderDash:[4,3],pointRadius:0}
+]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{position:'top',labels:{boxWidth:10,padding:10,font:{size:10}}},tooltip:{mode:'index',intersect:false}},scales:{x:{grid:{color:'#0f1e20'},ticks:{font:{size:9},maxRotation:45}},y:{grid:{color:'#0f1e20'},ticks:{font:{size:9},callback:v=>'$'+v+'M'}}}}});
+
+// Dealers
+new Chart(document.getElementById('c-dealers'),{type:'line',data:{labels:mo18,datasets:[
+  {label:'Cumulative Dealers',data:[150,175,210,280,370,460,540,620,700,780,850,910,950,980,1005,1025,1038,1047],borderColor:'#00c9c8',backgroundColor:'rgba(0,201,200,.1)',borderWidth:2.5,tension:.4,pointRadius:2.5,pointBackgroundColor:'#00c9c8',fill:true},
+  {label:'Target (1,000)',data:Array(18).fill(1000),borderColor:'#527478',borderWidth:1,borderDash:[4,3],pointRadius:0}
+]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{position:'top',labels:{boxWidth:10,padding:10,font:{size:10}}},tooltip:{mode:'index',intersect:false}},scales:{x:{grid:{color:'#0f1e20'},ticks:{font:{size:9},maxRotation:45}},y:{grid:{color:'#0f1e20'},ticks:{font:{size:9}}}}}});
+
+// NPS + Adoption
+new Chart(document.getElementById('c-nps'),{type:'line',data:{labels:mo18,datasets:[
+  {label:'Dealer NPS (0–10)',data:[4.5,4.6,4.7,4.9,5.1,5.4,5.7,6.0,6.3,6.6,6.9,7.1,7.3,7.5,7.7,7.9,8.1,8.2],borderColor:'#a78bfa',backgroundColor:'rgba(167,139,250,.08)',borderWidth:2.5,tension:.4,pointRadius:2.5,pointBackgroundColor:'#a78bfa',fill:true,yAxisID:'y'},
+  {label:'Portal Adoption (%)',data:[0,8,14,22,32,42,52,60,66,70,74,77,79,81,82,83,84,84],borderColor:'#00e5b0',backgroundColor:'rgba(0,229,176,.06)',borderWidth:2,tension:.4,pointRadius:2,pointBackgroundColor:'#00e5b0',borderDash:[],fill:true,yAxisID:'y1'}
+]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{position:'top',labels:{boxWidth:10,padding:10,font:{size:10}}},tooltip:{mode:'index',intersect:false}},scales:{x:{grid:{color:'#0f1e20'},ticks:{font:{size:9},maxRotation:45}},y:{grid:{color:'#0f1e20'},ticks:{font:{size:9}},min:0,max:10,title:{display:true,text:'NPS',font:{size:9},color:'#527478'}},y1:{position:'right',grid:{display:false},ticks:{font:{size:9},callback:v=>v+'%'},min:0,max:100}}}});
+
+// Journey fill animation
+setTimeout(()=>{document.getElementById('j-fill').style.width='calc(100% - 80px)'},300);
+
+// Phase details
+const phases=[
+  {title:'Phase 1 — Discovery & Design · Jan–Mar 2018',body:'Conducted structured discovery with 40+ dealer interviews across 5 NA regions. Mapped current-state pain points: fragmented information sources, slow manual onboarding (avg 3 weeks), no direct CRM access, and no order visibility. Defined portal vision, product requirements, and phased delivery roadmap. Starting point: 150 dealers, $20M annualized revenue.'},
+  {title:'Phase 2 — Core Portal Build · Apr–Jun 2018',body:'Shipped the Marketing & Content Hub (single source for product specs, marketing materials, service bulletins) and automated self-service onboarding (reduced from 3 weeks to 2 days). First 280 dealers activated by end of phase. NPS moved from 4.5 to 5.1 as dealers praised ease of access to information.'},
+  {title:'Phase 3 — CRM & Quote Integration · Jul–Sep 2018',body:'Integrated Salesforce CRM — dealers gained direct access to their assigned leads. CPQ integration enabled lead-to-quote in under 10 minutes. 540 dealers onboarded by end of phase. Channel revenue run-rate crossed $42M annualized. Win rates improved as dealers could respond faster to leads.'},
+  {title:'Phase 4 — Ordering & Fulfilment · Oct–Dec 2018',body:'Launched automated ordering, real-time order tracking, and fulfilment integration — eliminating manual order entry and follow-up calls. This was the key unlock for revenue acceleration. Revenue run-rate jumped to $65M annualized with 700 dealers active. Dealer satisfaction climbed sharply as order visibility improved.'},
+  {title:'Phase 5 — Scale & Optimise · Jan–Jun 2019',body:'Scaled onboarding operations across all 5 NA regions. Launched dealer performance dashboards, adoption nudges, and region-specific content. Crossed 1,000 dealers and $90M run-rate. Iterated on UX based on feedback to drive adoption from 77% to 84%. NPS reached 8.2.'},
+  {title:'Phase 6 — Steady State · Jun 2019 →',body:'Platform fully operational. 1,047 active dealers, $90M channel revenue, 84% adoption, NPS 8.2. Focus shifted to dealer success programs, conversion optimisation, and Power BI dashboards for regional managers. Foundation set for international expansion.'},
+];
+
+function expandPhase(i){
+  const det=document.getElementById('phase-detail');
+  const p=phases[i];
+  if(det.innerHTML.includes(p.title)&&det.classList.contains('open')){det.classList.remove('open');return;}
+  det.innerHTML=`<strong>${p.title}</strong>${p.body}`;
+  det.classList.add('open');
+}
+</script>
+</body></html>

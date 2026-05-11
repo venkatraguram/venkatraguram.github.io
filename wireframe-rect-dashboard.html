@@ -1,0 +1,464 @@
+<!DOCTYPE html><html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RV Industry RECT Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#090d0e;--bg2:#0e1416;--bg3:#141d1f;--card:#0e1a1c;--border:#1a2e30;--txt:#dff4f4;--txt2:#8ab8bc;--txt3:#527478;--accent:#00c9c8;--accent2:#00e5b0;--warn:#f59e0b;--danger:#ef4444;--ok:#22c55e;--purple:#a78bfa;--orange:#f97316}
+body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans-serif;font-size:12px;min-height:100vh;display:flex;flex-direction:column}
+.topbar{height:44px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0}
+.logo{font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.06em;white-space:nowrap}
+.divv{width:1px;height:18px;background:var(--border)}
+.tb-title{font-size:13px;font-weight:600;color:var(--txt)}
+.tb-sub{font-size:10px;color:var(--txt3)}
+.filters{display:flex;gap:6px;align-items:center;margin-left:8px}
+.filter-label{font-size:10px;color:var(--txt3);white-space:nowrap}
+select{background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:3px 8px;color:var(--txt);font-size:11px;outline:none;cursor:pointer;transition:border-color .15s}
+select:focus{border-color:var(--accent)}
+.tb-right{margin-left:auto;display:flex;gap:6px;align-items:center}
+.tb-chip{padding:2px 9px;border-radius:10px;font-size:10px;background:var(--bg3);border:1px solid var(--border);color:var(--txt2);white-space:nowrap}
+.tb-chip b{color:var(--accent2)}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--ok);animation:blink 1.4s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.tb-btn{padding:3px 10px;border-radius:4px;font-size:11px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--txt2);transition:all .15s}
+.tb-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+.body{padding:12px 16px;display:flex;flex-direction:column;gap:12px;flex:1}
+
+/* KPI ROW */
+.kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 12px;position:relative;overflow:hidden}
+.kpi::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px}
+.kpi.a::after{background:var(--accent)}
+.kpi.g::after{background:var(--accent2)}
+.kpi.w::after{background:var(--warn)}
+.kpi.d::after{background:var(--danger)}
+.kpi.p::after{background:var(--purple)}
+.kpi.o::after{background:var(--orange)}
+.kpi-label{font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--txt3);margin-bottom:3px}
+.kpi-val{font-size:1.4rem;font-weight:700;line-height:1;margin-bottom:2px}
+.kpi.a .kpi-val{color:var(--accent)}
+.kpi.g .kpi-val{color:var(--accent2)}
+.kpi.w .kpi-val{color:var(--warn)}
+.kpi.d .kpi-val{color:var(--danger)}
+.kpi.p .kpi-val{color:var(--purple)}
+.kpi.o .kpi-val{color:var(--orange)}
+.kpi-delta{font-size:10px;color:var(--ok)}
+.kpi-sub{font-size:9px;color:var(--txt3)}
+
+/* GRIDS */
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.row21{display:grid;grid-template-columns:2fr 1fr;gap:12px}
+.row12{display:grid;grid-template-columns:1fr 2fr;gap:12px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+.card-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--txt);margin-bottom:1px}
+.card-sub{font-size:9px;color:var(--txt3);margin-bottom:8px}
+.b{padding:1px 6px;border-radius:8px;font-size:9px;font-weight:700;display:inline-block}
+.b-ok{background:#052010;color:var(--ok)}
+.b-w{background:#1c1205;color:var(--warn)}
+.b-d{background:#1a0505;color:var(--danger)}
+.b-i{background:#051e1e;color:var(--accent)}
+.b-p{background:#1a1530;color:var(--purple)}
+.b-o{background:#1a0d05;color:var(--orange)}
+
+/* WATERFALL */
+.wf-wrap{display:flex;align-items:flex-end;gap:3px;height:120px;padding-top:8px}
+.wf-bar-group{display:flex;flex-direction:column;align-items:center;flex:1;height:100%}
+.wf-bar-outer{width:100%;flex:1;display:flex;flex-direction:column;justify-content:flex-end;position:relative}
+.wf-bar{width:100%;border-radius:4px 4px 0 0;transition:opacity .2s;cursor:pointer;position:relative}
+.wf-bar:hover{opacity:.8}
+.wf-bar-label{font-size:9px;color:var(--txt3);text-align:center;margin-top:4px;line-height:1.3}
+.wf-bar-val{font-size:10px;font-weight:700;text-align:center;position:absolute;top:-16px;width:100%}
+.wf-connector{position:absolute;top:0;right:-3px;width:3px;background:var(--border);z-index:1}
+
+/* INSIGHT CARDS */
+.insight-card{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:9px 10px;display:flex;gap:8px;cursor:pointer;transition:border-color .15s;margin-bottom:6px}
+.insight-card:hover{border-color:var(--accent)}
+.insight-card:last-child{margin-bottom:0}
+.insight-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.insight-body{flex:1}
+.insight-title{font-size:11px;font-weight:600;color:var(--txt);margin-bottom:2px}
+.insight-desc{font-size:10px;color:var(--txt2);line-height:1.4}
+.insight-action{font-size:10px;color:var(--accent);margin-top:3px;font-weight:500}
+.insight-impact{font-size:9px;font-weight:700;white-space:nowrap;flex-shrink:0;align-self:flex-start;margin-top:2px}
+
+/* COMPARE BARS */
+.cmp-row{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.cmp-label{font-size:10px;color:var(--txt2);width:110px;flex-shrink:0;line-height:1.3}
+.cmp-bars{flex:1;display:flex;flex-direction:column;gap:2px}
+.cmp-bar{height:7px;border-radius:3px;transition:width .4s}
+.cmp-vals{display:flex;justify-content:space-between;font-size:9px;color:var(--txt3);margin-top:1px}
+.cmp-val-right{font-weight:700;color:var(--txt)}
+
+/* PERCENTILE LEGEND */
+.pct-legend{display:flex;gap:10px;margin-bottom:6px;flex-wrap:wrap}
+.pct-item{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--txt3)}
+.pct-dot{width:10px;height:3px;border-radius:1px}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:var(--txt3);padding:5px 6px;text-align:left;border-bottom:1px solid var(--border);font-weight:600}
+.tbl td{font-size:10px;padding:5px 6px;border-bottom:1px solid #0f1e20;color:var(--txt2)}
+.tbl tr:hover td{background:var(--bg3)}
+.tbl td strong{color:var(--txt)}
+.tbl td.pos{color:var(--accent2)}
+.tbl td.neg{color:var(--danger)}
+.tbl td.warn{color:var(--warn)}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <span class="logo">RV INDUSTRY</span>
+  <div class="divv"></div>
+  <div>
+    <div class="tb-title">Repair Event Cycle Time (RECT) Dashboard</div>
+    <div class="tb-sub">Nationwide · Sample: 847 repair events · 12 dealerships · 6 OEMs</div>
+  </div>
+  <div class="filters">
+    <span class="filter-label">OEM</span>
+    <select id="f-oem" onchange="applyFilter()"><option>All OEMs</option><option>Thor Industries</option><option>Forest River</option><option>Winnebago</option><option>Coachmen</option><option>Keystone RV</option><option>Grand Design</option></select>
+    <span class="filter-label">Region</span>
+    <select id="f-region" onchange="applyFilter()"><option>All Regions</option><option>Northeast</option><option>Southeast</option><option>Midwest</option><option>Southwest</option><option>West</option></select>
+    <span class="filter-label">Dealer</span>
+    <select id="f-dealer" onchange="applyFilter()"><option>All Dealers</option><option>Camping World – OH</option><option>Lazydays RV – FL</option><option>General RV – MI</option><option>Blue Compass – TX</option><option>RVOne – NY</option></select>
+    <span class="filter-label">Period</span>
+    <select id="f-period" onchange="applyFilter()"><option>Full Year 2017</option><option>Q1 2017</option><option>Q2 2017</option><option>Q3 2017</option><option>Q4 2017</option></select>
+  </div>
+  <div class="tb-right">
+    <div class="live-dot"></div>
+    <span class="tb-chip">Sample <b>847 events</b></span>
+    <span class="tb-chip">Mean RECT <b id="tb-rect">24.8d</b></span>
+    <button class="tb-btn">↓ Export</button>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- KPI ROW -->
+  <div class="kpi-row">
+    <div class="kpi w"><div class="kpi-label">Mean RECT</div><div class="kpi-val" id="kpi-rect">24.8d</div><div class="kpi-delta">▼ Target: &lt;15d</div><div class="kpi-sub">Industry avg</div></div>
+    <div class="kpi d"><div class="kpi-label">P90 RECT</div><div class="kpi-val" id="kpi-p90">47.2d</div><div class="kpi-delta" style="color:var(--danger)">Top 10% worst</div><div class="kpi-sub">Outlier repairs</div></div>
+    <div class="kpi g"><div class="kpi-label">P50 (Median)</div><div class="kpi-val" id="kpi-p50">21.4d</div><div class="kpi-delta">Median repair</div><div class="kpi-sub">Half below this</div></div>
+    <div class="kpi a"><div class="kpi-label">Parts Lead Time</div><div class="kpi-val">9.2d</div><div class="kpi-delta">37% of RECT</div><div class="kpi-sub">Avg wait for parts</div></div>
+    <div class="kpi p"><div class="kpi-label">Warranty Delay</div><div class="kpi-val">6.1d</div><div class="kpi-delta" style="color:var(--danger)">▲ vs 1.8d regular</div><div class="kpi-sub">Avg approval wait</div></div>
+    <div class="kpi o"><div class="kpi-label">Receipt-to-Repair</div><div class="kpi-val">4.8d</div><div class="kpi-delta" style="color:var(--warn)">Scheduling gap</div><div class="kpi-sub">After parts arrive</div></div>
+  </div>
+
+  <!-- ROW 1: RECT TREND + WATERFALL -->
+  <div class="row21">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+        <div><div class="card-title">RECT Trend — Mean, P50, P75, P90</div><div class="card-sub">Monthly · Days · All filters applied</div></div>
+        <div style="display:flex;gap:4px"><span class="b b-w">Mean 24.8d</span><span class="b b-d">P90 47.2d</span></div>
+      </div>
+      <div class="pct-legend">
+        <div class="pct-item"><div class="pct-dot" style="background:var(--danger)"></div>P90</div>
+        <div class="pct-item"><div class="pct-dot" style="background:var(--warn)"></div>P75</div>
+        <div class="pct-item"><div class="pct-dot" style="background:var(--accent)"></div>Mean</div>
+        <div class="pct-item"><div class="pct-dot" style="background:var(--accent2)"></div>P50</div>
+        <div class="pct-item"><div class="pct-dot" style="background:var(--border);width:18px;border-top:2px dashed var(--txt3)"></div>Target 15d</div>
+      </div>
+      <canvas id="c-rect-trend" height="95"></canvas>
+    </div>
+
+    <div class="card">
+      <div class="card-title">RECT Waterfall — Mean Breakdown</div>
+      <div class="card-sub">Avg days contributed by each phase · Total 24.8d</div>
+      <div class="wf-wrap" id="wf-wrap">
+        <!-- built by JS -->
+      </div>
+      <div style="margin-top:8px;padding:6px 8px;background:var(--bg3);border-radius:5px;font-size:10px;color:var(--txt2)">
+        <strong style="color:var(--txt)">Largest driver:</strong> Parts ordering + lead time = <strong style="color:var(--danger)">12.4d (50% of RECT)</strong> — catalog errors cause mis-orders that restart the clock.
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 2: FACTOR COMPARISONS + OEM VARIANCE -->
+  <div class="row3">
+    <div class="card">
+      <div class="card-title">Warranty vs Regular Repair</div>
+      <div class="card-sub">Mean RECT by repair authorization type</div>
+      <canvas id="c-warranty" height="120"></canvas>
+      <div style="margin-top:6px;font-size:10px;color:var(--txt2);padding:5px 7px;background:#1a1530;border-left:2px solid var(--purple);border-radius:0 4px 4px 0">Warranty repairs take <strong style="color:var(--purple)">3.4× longer</strong> than regular repairs — authorization bottleneck accounts for 6.1 avg days of delay.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">In-Stock vs Out-of-Stock Parts</div>
+      <div class="card-sub">Mean RECT by parts availability at order time</div>
+      <canvas id="c-stock" height="120"></canvas>
+      <div style="margin-top:6px;font-size:10px;color:var(--txt2);padding:5px 7px;background:#1a0505;border-left:2px solid var(--danger);border-radius:0 4px 4px 0">Out-of-stock repairs average <strong style="color:var(--danger)">38.4 days</strong> vs 11.2 for in-stock. Poor catalogs drive 34% of OOS mis-orders.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">RECT by OEM</div>
+      <div class="card-sub">Mean days · Variance indicates readiness gaps</div>
+      <canvas id="c-oem" height="120"></canvas>
+      <div style="margin-top:6px;font-size:10px;color:var(--txt2);padding:5px 7px;background:#1c1205;border-left:2px solid var(--warn);border-radius:0 4px 4px 0"><strong style="color:var(--warn)">18d range</strong> between best and worst OEM — driven by parts catalog quality and warranty policy complexity.</div>
+    </div>
+  </div>
+
+  <!-- ROW 3: KEY FACTOR VARIATIONS -->
+  <div class="row2">
+    <div class="card">
+      <div class="card-title">Key Factor Variation Analysis</div>
+      <div class="card-sub">Avg days added to RECT by each factor — all dealers</div>
+      <div style="margin-top:4px">
+        <div class="cmp-row">
+          <span class="cmp-label">Parts catalog errors</span>
+          <div class="cmp-bars">
+            <div class="cmp-bar" style="width:88%;background:var(--danger)"></div>
+            <div class="cmp-vals"><span>Impact: 7.8d avg delay when mis-order occurs</span><span class="cmp-val-right" style="color:var(--danger)">7.8d</span></div>
+          </div>
+        </div>
+        <div class="cmp-row">
+          <span class="cmp-label">Warranty auth. wait</span>
+          <div class="cmp-bars">
+            <div class="cmp-bar" style="width:69%;background:var(--purple)"></div>
+            <div class="cmp-vals"><span>Avg 6.1d · range 2–18d by OEM</span><span class="cmp-val-right" style="color:var(--purple)">6.1d</span></div>
+          </div>
+        </div>
+        <div class="cmp-row">
+          <span class="cmp-label">Receipt-to-repair lag</span>
+          <div class="cmp-bars">
+            <div class="cmp-bar" style="width:54%;background:var(--orange)"></div>
+            <div class="cmp-vals"><span>Scheduling gap after parts arrive</span><span class="cmp-val-right" style="color:var(--orange)">4.8d</span></div>
+          </div>
+        </div>
+        <div class="cmp-row">
+          <span class="cmp-label">Tech readiness gaps</span>
+          <div class="cmp-bars">
+            <div class="cmp-bar" style="width:42%;background:var(--warn)"></div>
+            <div class="cmp-vals"><span>Repair duration 1.8× longer when uncertified</span><span class="cmp-val-right" style="color:var(--warn)">3.7d</span></div>
+          </div>
+        </div>
+        <div class="cmp-row">
+          <span class="cmp-label">Seasonal surge (Q2–Q3)</span>
+          <div class="cmp-bars">
+            <div class="cmp-bar" style="width:34%;background:var(--accent)"></div>
+            <div class="cmp-vals"><span>+3.1d in peak season vs off-season</span><span class="cmp-val-right" style="color:var(--accent)">3.1d</span></div>
+          </div>
+        </div>
+        <div class="cmp-row">
+          <span class="cmp-label">Model complexity</span>
+          <div class="cmp-bars">
+            <div class="cmp-bar" style="width:26%;background:var(--accent2)"></div>
+            <div class="cmp-vals"><span>Class A motorhomes avg 2.3d longer than travel trailers</span><span class="cmp-val-right" style="color:var(--accent2)">2.3d</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Seasonal RECT Variation</div>
+      <div class="card-sub">Mean RECT by month — peak season effect visible Q2–Q3</div>
+      <canvas id="c-seasonal" height="110"></canvas>
+      <div style="margin-top:6px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:6px 8px;font-size:10px"><div style="color:var(--txt3);margin-bottom:2px">Peak (Jun–Aug)</div><div style="color:var(--danger);font-weight:700;font-size:13px">31.2d</div></div>
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:6px 8px;font-size:10px"><div style="color:var(--txt3);margin-bottom:2px">Off-season (Nov–Feb)</div><div style="color:var(--accent2);font-weight:700;font-size:13px">18.1d</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 4: INSIGHTS + DEALER TABLE -->
+  <div class="row12">
+    <div class="card">
+      <div class="card-title">Top Insights & Recommended Actions</div>
+      <div class="card-sub">AI-synthesized from sample data · Prioritized by RECT impact</div>
+      <div style="margin-top:4px">
+
+        <div class="insight-card">
+          <div class="insight-icon">📚</div>
+          <div class="insight-body">
+            <div class="insight-title">Parts Catalog Quality — #1 Root Cause</div>
+            <div class="insight-desc">34% of OOS events traced to incorrect part numbers in OEM catalogs. Dealers order wrong part, wait for delivery, discover error, restart order — adding avg 7.8 days per occurrence.</div>
+            <div class="insight-action">→ OEMs to audit and update catalogs quarterly. Implement part number validation at order entry.</div>
+          </div>
+          <span class="insight-impact" style="color:var(--danger)">−7.8d</span>
+        </div>
+
+        <div class="insight-card">
+          <div class="insight-icon">⚖️</div>
+          <div class="insight-body">
+            <div class="insight-title">Warranty Authorization Bottleneck</div>
+            <div class="insight-desc">Warranty repairs average 6.1 days waiting for OEM authorization — vs 1.8 days for regular repairs. Range spans 2–18 days across OEMs. No standard SLA exists. Completed repairs sit idle waiting for approval to close.</div>
+            <div class="insight-action">→ Establish 48-hr OEM warranty authorization SLA. Pre-authorize common repair categories.</div>
+          </div>
+          <span class="insight-impact" style="color:var(--purple)">−4.3d</span>
+        </div>
+
+        <div class="insight-card">
+          <div class="insight-icon">🔧</div>
+          <div class="insight-body">
+            <div class="insight-title">Technician Training Gaps</div>
+            <div class="insight-desc">Repairs performed by uncertified techs take 1.8× longer than certified — and have 2.4× higher re-work rates. New model launches see the sharpest spike as dealers lack training on new systems and components.</div>
+            <div class="insight-action">→ Mandate OEM training prior to new model retail launch. Fund dealer certification programs.</div>
+          </div>
+          <span class="insight-impact" style="color:var(--warn)">−3.7d</span>
+        </div>
+
+        <div class="insight-card">
+          <div class="insight-icon">📅</div>
+          <div class="insight-body">
+            <div class="insight-title">Seasonal Capacity Planning Failure</div>
+            <div class="insight-desc">RECT spikes 72% in Q2–Q3 peak season (18.1d → 31.2d). Dealers do not pre-position parts inventory or staff for predictable seasonal demand. Parts are ordered reactively when units arrive — avoidable delays.</div>
+            <div class="insight-action">→ Develop seasonal stocking guides by model mix. Incentivize pre-season tech certification completion.</div>
+          </div>
+          <span class="insight-impact" style="color:var(--orange)">−3.1d</span>
+        </div>
+
+        <div class="insight-card">
+          <div class="insight-icon">🚐</div>
+          <div class="insight-body">
+            <div class="insight-title">Model Complexity Variance</div>
+            <div class="insight-desc">Class A motorhomes average 2.3 days longer RECT than travel trailers — driven by system complexity (chassis, slideouts, electrical). Dealers with high Class A mix but low Class A certification rates show worst outcomes.</div>
+            <div class="insight-action">→ Route complex repairs to certified dealers. OEMs to publish complexity-tiered repair guides.</div>
+          </div>
+          <span class="insight-impact" style="color:var(--accent2)">−2.3d</span>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Dealer Performance Benchmarking</div>
+      <div class="card-sub">Mean RECT vs industry average · All regions</div>
+      <table class="tbl">
+        <thead><tr><th>Dealer</th><th>Region</th><th>Events</th><th>Mean RECT</th><th>vs Avg</th><th>P90</th><th>Top Factor</th></tr></thead>
+        <tbody id="dealer-tbl"></tbody>
+      </table>
+      <div style="margin-top:8px;background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:7px 9px">
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);margin-bottom:4px">Industry Benchmark Summary</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;font-size:10px">
+          <div style="color:var(--txt2)">Best performer: <strong style="color:var(--accent2)">13.2d</strong></div>
+          <div style="color:var(--txt2)">Worst performer: <strong style="color:var(--danger)">38.7d</strong></div>
+          <div style="color:var(--txt2)">Industry mean: <strong style="color:var(--warn)">24.8d</strong></div>
+          <div style="color:var(--txt2)">Target: <strong style="color:var(--ok)">&lt;15d</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+Chart.defaults.color='#527478';
+Chart.defaults.borderColor='#1a2e30';
+Chart.defaults.font.family='Segoe UI, system-ui, sans-serif';
+Chart.defaults.font.size=10;
+
+const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+// RECT Trend
+const rectChart=new Chart(document.getElementById('c-rect-trend'),{type:'line',data:{labels:months,datasets:[
+  {label:'P90',data:[40,41,43,48,52,56,54,51,48,45,44,47],borderColor:'#ef4444',borderWidth:1.5,tension:.4,pointRadius:0,fill:false},
+  {label:'P75',data:[28,29,31,34,38,40,38,36,34,31,30,32],borderColor:'#f59e0b',borderWidth:1.5,tension:.4,pointRadius:0,fill:false},
+  {label:'Mean',data:[22,22.5,23,26,29,31,30,28,26,23.5,22,24.8],borderColor:'#00c9c8',borderWidth:2,tension:.4,pointRadius:3,pointBackgroundColor:'#00c9c8',fill:false},
+  {label:'P50',data:[18,18.5,19,21,24,26,25,23,21,19,18,21],borderColor:'#00e5b0',borderWidth:1.5,tension:.4,pointRadius:0,fill:false},
+  {label:'Target 15d',data:Array(12).fill(15),borderColor:'#527478',borderWidth:1,borderDash:[4,3],pointRadius:0}
+]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{grid:{color:'#0f1e20'},ticks:{font:{size:9}}},y:{grid:{color:'#0f1e20'},ticks:{font:{size:9},callback:v=>v+'d'},min:0}}}});
+
+// Waterfall
+const wfData=[
+  {label:'Complaint\nLogging',val:1.2,color:'#527478'},
+  {label:'Parts\nOrdering',val:3.2,color:'#ef4444'},
+  {label:'Parts\nLead Time',val:9.2,color:'#ef4444'},
+  {label:'Receipt-to-\nRepair',val:4.8,color:'#f97316'},
+  {label:'Active\nRepair',val:4.2,color:'#00c9c8'},
+  {label:'Warranty\nReview',val:6.1,color:'#a78bfa'},
+  {label:'Close &\nHandover',val:1.1,color:'#527478'},
+];
+const wfWrap=document.getElementById('wf-wrap');
+const wfMax=wfData.reduce((a,b)=>a+b.val,0);
+wfData.forEach((d,i)=>{
+  const pct=Math.round((d.val/wfMax)*100);
+  const g=document.createElement('div');
+  g.className='wf-bar-group';
+  g.innerHTML=`<div class="wf-bar-outer"><div class="wf-bar" style="height:${pct}%;background:${d.color};min-height:8px"><div class="wf-bar-val" style="color:${d.color}">${d.val}d</div></div></div><div class="wf-bar-label">${d.label.replace('\n','<br>')}</div>`;
+  wfWrap.appendChild(g);
+});
+
+// Warranty comparison
+new Chart(document.getElementById('c-warranty'),{type:'bar',
+  data:{labels:['Regular\nRepair','Warranty\nRepair'],
+    datasets:[
+      {label:'Parts Lead Time',data:[7.8,9.8],backgroundColor:'rgba(239,68,68,.7)',borderRadius:3},
+      {label:'Auth. Wait',data:[1.8,6.1],backgroundColor:'rgba(167,139,250,.7)',borderRadius:3},
+      {label:'Receipt→Repair',data:[3.1,5.8],backgroundColor:'rgba(249,115,22,.7)',borderRadius:3},
+      {label:'Active Repair',data:[3.8,4.2],backgroundColor:'rgba(0,201,200,.7)',borderRadius:3},
+    ]},
+  options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{position:'top',labels:{boxWidth:8,padding:8,font:{size:9}}},tooltip:{mode:'index'}},scales:{x:{stacked:true,grid:{color:'#0f1e20'},ticks:{font:{size:9}}},y:{stacked:true,grid:{color:'#0f1e20'},ticks:{font:{size:9},callback:v=>v+'d'}}}}
+});
+
+// In-stock vs OOS
+new Chart(document.getElementById('c-stock'),{type:'bar',
+  data:{labels:['In-Stock\nParts','Out-of-Stock\nParts'],
+    datasets:[
+      {label:'Parts Lead Time',data:[1.2,14.6],backgroundColor:'rgba(239,68,68,.7)',borderRadius:3},
+      {label:'Auth. Wait',data:[2.8,4.2],backgroundColor:'rgba(167,139,250,.7)',borderRadius:3},
+      {label:'Receipt→Repair',data:[3.4,5.8],backgroundColor:'rgba(249,115,22,.7)',borderRadius:3},
+      {label:'Active Repair',data:[3.8,4.0],backgroundColor:'rgba(0,201,200,.7)',borderRadius:3},
+    ]},
+  options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{position:'top',labels:{boxWidth:8,padding:8,font:{size:9}}},tooltip:{mode:'index'}},scales:{x:{stacked:true,grid:{color:'#0f1e20'},ticks:{font:{size:9}}},y:{stacked:true,grid:{color:'#0f1e20'},ticks:{font:{size:9},callback:v=>v+'d'}}}}
+});
+
+// OEM variance
+new Chart(document.getElementById('c-oem'),{type:'bar',
+  data:{labels:['Thor','Forest\nRiver','Winnebago','Coachmen','Keystone','Grand\nDesign'],
+    datasets:[{label:'Mean RECT (days)',data:[28.4,22.1,19.8,31.2,24.6,17.6],
+      backgroundColor:['rgba(239,68,68,.6)','rgba(0,201,200,.6)','rgba(0,229,176,.6)','rgba(239,68,68,.8)','rgba(245,158,11,.6)','rgba(0,229,176,.8)'],
+      borderColor:['#ef4444','#00c9c8','#00e5b0','#ef4444','#f59e0b','#00e5b0'],
+      borderWidth:1.5,borderRadius:4}]},
+  options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.raw+'d'}}},scales:{x:{grid:{color:'#0f1e20'},ticks:{font:{size:9}}},y:{grid:{color:'#0f1e20'},ticks:{font:{size:9},callback:v=>v+'d'},min:0}}}
+});
+
+// Seasonal
+new Chart(document.getElementById('c-seasonal'),{type:'line',
+  data:{labels:months,datasets:[
+    {label:'Mean RECT',data:[19.2,18.1,21.4,25.6,28.4,31.2,30.8,28.6,25.2,22.4,19.8,18.4],
+      borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,.1)',borderWidth:2,tension:.4,pointRadius:3,pointBackgroundColor:months.map((_,i)=>i>=5&&i<=7?'#ef4444':'#f59e0b'),fill:true},
+    {label:'Target',data:Array(12).fill(15),borderColor:'#527478',borderWidth:1,borderDash:[4,3],pointRadius:0}
+  ]},
+  options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{grid:{color:'#0f1e20'},ticks:{font:{size:9}}},y:{grid:{color:'#0f1e20'},ticks:{font:{size:9},callback:v=>v+'d'},min:0}}}
+});
+
+// Dealer table
+const dealers=[
+  {name:'General RV – MI',region:'Midwest',events:112,rect:13.2,vs:-11.6,p90:22.1,factor:'Well-trained techs'},
+  {name:'Grand Design Cert.',region:'Midwest',events:84,rect:15.8,vs:-9.0,p90:27.4,factor:'Strong catalog use'},
+  {name:'Blue Compass – TX',region:'Southwest',events:98,rect:21.4,vs:-3.4,p90:38.2,factor:'Seasonal surge'},
+  {name:'RVOne – NY',region:'Northeast',events:76,rect:24.8,vs:0.0,p90:44.6,factor:'Warranty delays'},
+  {name:'Camping World – OH',region:'Midwest',events:134,rect:27.6,vs:+2.8,p90:48.2,factor:'Catalog errors'},
+  {name:'Lazydays RV – FL',region:'Southeast',events:102,rect:31.4,vs:+6.6,p90:52.4,factor:'OOS parts · Q3'},
+  {name:'Scenic RV – AZ',region:'Southwest',events:68,rect:38.7,vs:+13.9,p90:61.8,factor:'Tech readiness'},
+];
+const tbody=document.getElementById('dealer-tbl');
+dealers.forEach(d=>{
+  const vsClass=d.vs<0?'pos':d.vs>3?'neg':'warn';
+  const vsStr=(d.vs>0?'+':'')+d.vs.toFixed(1)+'d';
+  const rectColor=d.rect<18?'color:var(--accent2)':d.rect<26?'color:var(--warn)':'color:var(--danger)';
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td><strong>${d.name}</strong></td><td>${d.region}</td><td>${d.events}</td><td style="${rectColor};font-weight:700">${d.rect}d</td><td class="${vsClass}">${vsStr}</td><td>${d.p90}d</td><td style="color:var(--txt3)">${d.factor}</td>`;
+  tbody.appendChild(tr);
+});
+
+// Filter simulation
+function applyFilter(){
+  const oem=document.getElementById('f-oem').value;
+  const region=document.getElementById('f-region').value;
+  const dealer=document.getElementById('f-dealer').value;
+  // Simulate filter effect on KPIs
+  const base=24.8;
+  const offsets={'All OEMs':0,'Thor Industries':3.6,'Forest River':-2.7,'Winnebago':-5.0,'Coachmen':6.4,'Keystone RV':-0.2,'Grand Design':-7.2};
+  const rOff={'All Regions':0,'Northeast':1.2,'Southeast':2.4,'Midwest':-3.1,'Southwest':-0.8,'West':-1.4};
+  const dOff={'All Dealers':0,'Camping World – OH':2.8,'Lazydays RV – FL':6.6,'General RV – MI':-11.6,'Blue Compass – TX':-3.4,'RVOne – NY':0};
+  const newRect=(base+(offsets[oem]||0)+(rOff[region]||0)+(dOff[dealer]||0)).toFixed(1);
+  document.getElementById('kpi-rect').textContent=newRect+'d';
+  document.getElementById('kpi-p90').textContent=(parseFloat(newRect)*1.9).toFixed(1)+'d';
+  document.getElementById('kpi-p50').textContent=(parseFloat(newRect)*0.86).toFixed(1)+'d';
+  document.getElementById('tb-rect').textContent=newRect+'d';
+}
+</script>
+</body></html>

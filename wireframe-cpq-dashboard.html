@@ -1,0 +1,441 @@
+<!DOCTYPE html><html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Commercial Performance Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#090d0e;--bg2:#0e1416;--bg3:#141d1f;--card:#0e1a1c;--border:#1a2e30;--txt:#dff4f4;--txt2:#8ab8bc;--txt3:#527478;--accent:#00c9c8;--accent2:#00e5b0;--warn:#f59e0b;--danger:#ef4444;--ok:#22c55e;--purple:#a78bfa}
+body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans-serif;font-size:12px;min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden}
+
+/* TOP BAR */
+.topbar{height:44px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0}
+.logo{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.06em}
+.divv{width:1px;height:18px;background:var(--border)}
+.tb-title{font-size:13px;font-weight:600;color:var(--txt)}
+.tb-sub{font-size:11px;color:var(--txt3)}
+.tb-right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.tb-chip{padding:3px 10px;border-radius:10px;font-size:10px;font-weight:600;background:var(--bg3);border:1px solid var(--border);color:var(--txt2)}
+.tb-chip b{color:var(--accent2)}
+.period-select{background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:4px 8px;color:var(--txt);font-size:11px;outline:none;cursor:pointer}
+.export-btn{padding:4px 12px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--txt2);transition:all .15s}
+.export-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* TABS */
+.tabs{display:flex;padding:0 20px;border-bottom:1px solid var(--border);background:var(--bg2);gap:2px;flex-shrink:0}
+.tab{padding:9px 16px;font-size:11px;font-weight:600;color:var(--txt3);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;text-transform:uppercase;letter-spacing:.04em}
+.tab:hover{color:var(--txt2)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* PAGE */
+.page{display:none;padding:16px 20px;flex:1}
+.page.active{display:block}
+
+/* KPI ROW */
+.kpi-row{display:grid;gap:10px;margin-bottom:14px}
+.kpi-row.c4{grid-template-columns:repeat(4,1fr)}
+.kpi-row.c5{grid-template-columns:repeat(5,1fr)}
+.kpi-row.c3{grid-template-columns:repeat(3,1fr)}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.kpi.accent::before{background:var(--accent)}
+.kpi.accent2::before{background:var(--accent2)}
+.kpi.warn::before{background:var(--warn)}
+.kpi.danger::before{background:var(--danger)}
+.kpi.purple::before{background:var(--purple)}
+.kpi-label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--txt3);margin-bottom:4px}
+.kpi-val{font-size:1.6rem;font-weight:700;line-height:1;margin-bottom:4px}
+.kpi-val.c-a{color:var(--accent)}
+.kpi-val.c-g{color:var(--accent2)}
+.kpi-val.c-w{color:var(--warn)}
+.kpi-val.c-d{color:var(--danger)}
+.kpi-val.c-p{color:var(--purple)}
+.kpi-delta{font-size:10px;display:flex;align-items:center;gap:4px}
+.delta-up{color:var(--ok)}
+.delta-down{color:var(--danger)}
+.delta-neutral{color:var(--txt3)}
+.kpi-spark{height:28px;margin-top:6px}
+
+/* CHART GRID */
+.chart-grid{display:grid;gap:12px;margin-bottom:14px}
+.chart-grid.c2{grid-template-columns:1fr 1fr}
+.chart-grid.c3{grid-template-columns:1fr 1fr 1fr}
+.chart-grid.c21{grid-template-columns:2fr 1fr}
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+.chart-card.span2{grid-column:span 2}
+.cc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.cc-title{font-size:11px;font-weight:600;color:var(--txt);text-transform:uppercase;letter-spacing:.04em}
+.cc-sub{font-size:10px;color:var(--txt3);margin-top:1px}
+.cc-badge{font-size:9px;padding:2px 7px;border-radius:8px;font-weight:600}
+.badge-ok{background:#052010;color:var(--ok)}
+.badge-w{background:#1c1205;color:var(--warn)}
+.badge-i{background:#051e1e;color:var(--accent)}
+.badge-p{background:#1a1530;color:var(--purple)}
+.chart-wrap{position:relative}
+
+/* MILESTONE TIMELINE */
+.timeline{position:relative;padding:8px 0;margin-top:4px}
+.tl-track{position:absolute;top:16px;left:0;right:0;height:2px;background:var(--border)}
+.tl-fill{position:absolute;top:16px;left:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .5s}
+.tl-items{display:flex;justify-content:space-between;position:relative}
+.tl-item{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
+.tl-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--border);background:var(--bg);z-index:1;transition:all .2s;flex-shrink:0}
+.tl-dot.done{background:var(--accent);border-color:var(--accent)}
+.tl-dot.current{background:var(--accent2);border-color:var(--accent2);box-shadow:0 0 0 3px rgba(0,229,176,.2)}
+.tl-label{font-size:9px;color:var(--txt3);text-align:center;max-width:60px;line-height:1.3}
+.tl-date{font-size:9px;color:var(--txt3)}
+
+/* TABLE */
+.data-table{width:100%;border-collapse:collapse}
+.data-table th{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--txt3);padding:6px 8px;text-align:left;border-bottom:1px solid var(--border);font-weight:600}
+.data-table td{font-size:11px;padding:6px 8px;border-bottom:1px solid #0f1e20;color:var(--txt2)}
+.data-table tr:hover td{background:var(--bg3)}
+.data-table td.pos{color:var(--accent2)}
+.data-table td.neg{color:var(--danger)}
+.data-table td.warn{color:var(--warn)}
+.data-table td strong{color:var(--txt)}
+
+/* SECTION LABEL */
+.section-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-weight:600;margin-bottom:8px;padding-left:2px}
+
+/* DONUT LEGEND */
+.donut-legend{display:flex;flex-direction:column;gap:5px;margin-top:8px}
+.dl-item{display:flex;align-items:center;justify-content:space-between;font-size:11px}
+.dl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-right:6px}
+.dl-label{color:var(--txt2);flex:1}
+.dl-val{color:var(--txt);font-weight:600}
+
+/* TREND INDICATOR */
+.trend-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid #0f1e20;font-size:11px}
+.trend-row:last-child{border-bottom:none}
+.trend-name{color:var(--txt2)}
+.trend-bar-wrap{flex:1;height:4px;background:var(--bg3);border-radius:2px;margin:0 10px}
+.trend-bar{height:4px;border-radius:2px;transition:width .4s}
+.trend-val{color:var(--txt);font-weight:600;white-space:nowrap;font-size:11px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="logo">CUMMINS</span>
+  <div class="divv"></div>
+  <div>
+    <div class="tb-title">Commercial Performance Dashboard</div>
+    <div class="tb-sub">Power Systems · NA &amp; APAC · Last updated: Nov 2017</div>
+  </div>
+  <div class="tb-right">
+    <span class="tb-chip">YTD Revenue <b>$112.4M</b></span>
+    <span class="tb-chip">Dealers <b>1,047</b></span>
+    <select class="period-select" id="period-sel" onchange="updatePeriod()">
+      <option value="ytd">YTD 2017</option>
+      <option value="q4">Q4 2017</option>
+      <option value="q3">Q3 2017</option>
+    </select>
+    <button class="export-btn">↓ Export</button>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('commercial')">Commercial Sales</div>
+  <div class="tab" onclick="showTab('channel')">Dealer Channel</div>
+  <div class="tab" onclick="showTab('ops')">Operational Metrics</div>
+</div>
+
+<!-- ═══ COMMERCIAL SALES ═══ -->
+<div class="page active" id="tab-commercial">
+  <div class="section-label">Revenue Performance</div>
+  <div class="kpi-row c4">
+    <div class="kpi accent"><div class="kpi-label">YTD Revenue</div><div class="kpi-val c-a">$112.4M</div><div class="kpi-delta"><span class="delta-up">▲ 18.2%</span><span class="delta-neutral">vs prior year</span></div></div>
+    <div class="kpi accent2"><div class="kpi-label">CPQ-Attributed Revenue</div><div class="kpi-val c-g">$40.1M</div><div class="kpi-delta"><span class="delta-up">▲ 36%</span><span class="delta-neutral">of total · post-CPQ</span></div></div>
+    <div class="kpi warn"><div class="kpi-label">Avg Quote Cycle Time</div><div class="kpi-val c-w">4.6 days</div><div class="kpi-delta"><span class="delta-up">▼ 8.3%</span><span class="delta-neutral">vs 5.0 days baseline</span></div></div>
+    <div class="kpi accent"><div class="kpi-label">Win Rate</div><div class="kpi-val c-a">38.4%</div><div class="kpi-delta"><span class="delta-up">▲ 5.2pp</span><span class="delta-neutral">vs prior year</span></div></div>
+  </div>
+
+  <div class="chart-grid c2">
+    <div class="chart-card span2">
+      <div class="cc-header">
+        <div><div class="cc-title">Monthly Revenue — Total vs CPQ-Attributed</div><div class="cc-sub">$M · Jan–Nov 2017 · CPQ launched Apr 2016</div></div>
+        <span class="cc-badge badge-ok">+18.2% YoY</span>
+      </div>
+      <div class="chart-wrap"><canvas id="c-revenue" height="90"></canvas></div>
+    </div>
+  </div>
+
+  <div class="chart-grid c21">
+    <div class="chart-card">
+      <div class="cc-header">
+        <div><div class="cc-title">Quote Cycle Time — Monthly Avg (days)</div><div class="cc-sub">Baseline 5.0 days · Target 4.5 days</div></div>
+        <span class="cc-badge badge-ok">↓ 8.3%</span>
+      </div>
+      <div class="chart-wrap"><canvas id="c-cycle" height="100"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="cc-header"><div><div class="cc-title">Revenue by Product Line</div><div class="cc-sub">YTD 2017</div></div></div>
+      <div class="chart-wrap" style="max-width:180px;margin:0 auto"><canvas id="c-productmix" height="160"></canvas></div>
+      <div class="donut-legend">
+        <div class="dl-item"><div style="display:flex;align-items:center"><div class="dl-dot" style="background:#00c9c8"></div><span class="dl-label">ETO Generators</span></div><span class="dl-val">$47.2M</span></div>
+        <div class="dl-item"><div style="display:flex;align-items:center"><div class="dl-dot" style="background:#00e5b0"></div><span class="dl-label">CTO Generators</span></div><span class="dl-val">$38.6M</span></div>
+        <div class="dl-item"><div style="display:flex;align-items:center"><div class="dl-dot" style="background:#a78bfa"></div><span class="dl-label">Switches</span></div><span class="dl-val">$26.6M</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-card" style="margin-bottom:14px">
+    <div class="cc-header"><div><div class="cc-title">CPQ Transformation Journey</div><div class="cc-sub">Apr 2016 — Nov 2017 · Key milestones</div></div><span class="cc-badge badge-i">18 months</span></div>
+    <div class="timeline" style="padding:0 20px 16px">
+      <div class="tl-track"></div>
+      <div class="tl-fill" style="width:100%"></div>
+      <div class="tl-items">
+        <div class="tl-item" onclick="showMilestone('Discovery complete · Requirements signed off · Apr 2016')"><div class="tl-dot done"></div><div class="tl-label">Discovery</div><div class="tl-date">Apr '16</div></div>
+        <div class="tl-item" onclick="showMilestone('CPQ build complete · Config rules and pricing logic deployed · Aug 2016')"><div class="tl-dot done"></div><div class="tl-label">CPQ Build</div><div class="tl-date">Aug '16</div></div>
+        <div class="tl-item" onclick="showMilestone('CPQ pilot launched · First 20 reps · Oct 2016 · Cycle time −5%')"><div class="tl-dot done"></div><div class="tl-label">Pilot Launch</div><div class="tl-date">Oct '16</div></div>
+        <div class="tl-item" onclick="showMilestone('Full sales org rollout · 120+ reps · Jan 2017 · Cycle time target hit')"><div class="tl-dot done"></div><div class="tl-label">Full Rollout</div><div class="tl-date">Jan '17</div></div>
+        <div class="tl-item" onclick="showMilestone('First $10M CPQ-attributed revenue milestone · Mar 2017')"><div class="tl-dot done"></div><div class="tl-label">$10M CPQ Rev</div><div class="tl-date">Mar '17</div></div>
+        <div class="tl-item" onclick="showMilestone('Power BI adoption dashboards live · Apr 2017 · Real-time CPQ tracking')"><div class="tl-dot done"></div><div class="tl-label">Dashboards Live</div><div class="tl-date">Apr '17</div></div>
+        <div class="tl-item" onclick="showMilestone('$40M CPQ revenue milestone reached · Nov 2017 · Win rate +5.2pp')"><div class="tl-dot current"></div><div class="tl-label">$40M CPQ Rev</div><div class="tl-date">Nov '17</div></div>
+      </div>
+    </div>
+    <div id="milestone-msg" style="display:none;margin-top:4px;padding:7px 10px;background:#051e1e;border:1px solid #0a4040;border-radius:5px;font-size:11px;color:var(--txt2)"></div>
+  </div>
+
+</div>
+
+<!-- ═══ DEALER CHANNEL ═══ -->
+<div class="page" id="tab-channel">
+  <div class="section-label">Channel Revenue &amp; Dealer Growth</div>
+  <div class="kpi-row c4">
+    <div class="kpi accent2"><div class="kpi-label">Channel Revenue YTD</div><div class="kpi-val c-g">$68.4M</div><div class="kpi-delta"><span class="delta-up">▲ 241%</span><span class="delta-neutral">vs $20M baseline</span></div></div>
+    <div class="kpi accent"><div class="kpi-label">Active Dealers</div><div class="kpi-val c-a">1,047</div><div class="kpi-delta"><span class="delta-up">▲ 1,027</span><span class="delta-neutral">onboarded since Jan '16</span></div></div>
+    <div class="kpi warn"><div class="kpi-label">Avg Revenue / Dealer</div><div class="kpi-val c-w">$65.3K</div><div class="kpi-delta"><span class="delta-up">▲ 12%</span><span class="delta-neutral">vs prior year</span></div></div>
+    <div class="kpi purple"><div class="kpi-label">Dealer Activation Rate</div><div class="kpi-val c-p">84%</div><div class="kpi-delta"><span class="delta-up">▲ 6pp</span><span class="delta-neutral">vs Q1 2017</span></div></div>
+  </div>
+
+  <div class="chart-grid c2">
+    <div class="chart-card">
+      <div class="cc-header"><div><div class="cc-title">Channel Revenue Growth</div><div class="cc-sub">Monthly $M · Baseline $20M annualized · Jan 2016–Nov 2017</div></div><span class="cc-badge badge-ok">3.4× in 18 months</span></div>
+      <div class="chart-wrap"><canvas id="c-channel-rev" height="120"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="cc-header"><div><div class="cc-title">Dealer Onboarding — Cumulative</div><div class="cc-sub">Portal launched Jan 2016 · Target 1,000 dealers</div></div><span class="cc-badge badge-ok">Target exceeded</span></div>
+      <div class="chart-wrap"><canvas id="c-dealers" height="120"></canvas></div>
+    </div>
+  </div>
+
+  <div class="chart-grid c2">
+    <div class="chart-card">
+      <div class="cc-header"><div><div class="cc-title">Monthly Dealer Onboarding Rate</div><div class="cc-sub">New dealers activated per month</div></div><span class="cc-badge badge-i">Avg 57/mo</span></div>
+      <div class="chart-wrap"><canvas id="c-onboarding-rate" height="110"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="cc-header"><div><div class="cc-title">Revenue by Dealer Geography</div><div class="cc-sub">YTD 2017</div></div></div>
+      <div class="chart-wrap" style="max-width:170px;margin:0 auto"><canvas id="c-geo" height="150"></canvas></div>
+      <div class="donut-legend">
+        <div class="dl-item"><div style="display:flex;align-items:center"><div class="dl-dot" style="background:#00c9c8"></div><span class="dl-label">North America</span></div><span class="dl-val">$38.1M</span></div>
+        <div class="dl-item"><div style="display:flex;align-items:center"><div class="dl-dot" style="background:#00e5b0"></div><span class="dl-label">APAC</span></div><span class="dl-val">$18.4M</span></div>
+        <div class="dl-item"><div style="display:flex;align-items:center"><div class="dl-dot" style="background:#a78bfa"></div><span class="dl-label">EMEA</span></div><span class="dl-val">$11.9M</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <div class="cc-header"><div><div class="cc-title">Top 10 Dealers by YTD Revenue</div><div class="cc-sub">YTD 2017 · Portal-enabled orders only</div></div><span class="cc-badge badge-i">Combined $14.2M</span></div>
+    <table class="data-table">
+      <thead><tr><th>#</th><th>Dealer</th><th>Geography</th><th>YTD Revenue</th><th>Orders</th><th>Activation</th><th>vs Prior Year</th></tr></thead>
+      <tbody id="dealer-table"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══ OPERATIONAL METRICS ═══ -->
+<div class="page" id="tab-ops">
+  <div class="section-label">Quote Quality &amp; Forecast Performance</div>
+  <div class="kpi-row c5">
+    <div class="kpi danger"><div class="kpi-label">Requote Rate</div><div class="kpi-val c-d">8.2%</div><div class="kpi-delta"><span class="delta-up">▼ 4.1pp</span><span class="delta-neutral">from 12.3% baseline</span></div></div>
+    <div class="kpi warn"><div class="kpi-label">Quote Rejection Rate</div><div class="kpi-val c-w">11.4%</div><div class="kpi-delta"><span class="delta-up">▼ 3.8pp</span><span class="delta-neutral">from 15.2% baseline</span></div></div>
+    <div class="kpi accent2"><div class="kpi-label">Forecast Accuracy (MAP)</div><div class="kpi-val c-g">+40%</div><div class="kpi-delta"><span class="delta-up">▲ Significant</span><span class="delta-neutral">vs S&OP baseline</span></div></div>
+    <div class="kpi accent"><div class="kpi-label">Quotes Processed / Mo</div><div class="kpi-val c-a">847</div><div class="kpi-delta"><span class="delta-up">▲ 2.4×</span><span class="delta-neutral">vs pre-CPQ</span></div></div>
+    <div class="kpi purple"><div class="kpi-label">BOM Config Error Rate</div><div class="kpi-val c-p">0.4%</div><div class="kpi-delta"><span class="delta-up">▼ 98%</span><span class="delta-neutral">from 18.2% baseline</span></div></div>
+  </div>
+
+  <div class="chart-grid c2">
+    <div class="chart-card">
+      <div class="cc-header"><div><div class="cc-title">Requote &amp; Rejection Rate Trends</div><div class="cc-sub">% of total quotes · Monthly · CPQ launched Apr 2016</div></div><span class="cc-badge badge-ok">Both declining</span></div>
+      <div class="chart-wrap"><canvas id="c-requote" height="120"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="cc-header"><div><div class="cc-title">Forecast Accuracy — MAP Index</div><div class="cc-sub">Option-mix plan accuracy · Monthly · S&OP integration</div></div><span class="cc-badge badge-ok">+40% improvement</span></div>
+      <div class="chart-wrap"><canvas id="c-forecast" height="120"></canvas></div>
+    </div>
+  </div>
+
+  <div class="chart-grid c2">
+    <div class="chart-card">
+      <div class="cc-header"><div><div class="cc-title">Quote Volume &amp; Cycle Time</div><div class="cc-sub">Monthly quotes processed vs avg days to close</div></div></div>
+      <div class="chart-wrap"><canvas id="c-volume" height="110"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="cc-header"><div><div class="cc-title">Operational Health Scorecard</div><div class="cc-sub">Current vs baseline · Nov 2017</div></div><span class="cc-badge badge-ok">All metrics improving</span></div>
+      <div style="margin-top:6px">
+        <div class="trend-row"><span class="trend-name">Requote rate</span><div class="trend-bar-wrap"><div class="trend-bar" style="width:33%;background:var(--accent2)"></div></div><span class="trend-val" style="color:var(--accent2)">8.2% ▼ 4.1pp</span></div>
+        <div class="trend-row"><span class="trend-name">Quote rejection rate</span><div class="trend-bar-wrap"><div class="trend-bar" style="width:44%;background:var(--warn)"></div></div><span class="trend-val" style="color:var(--warn)">11.4% ▼ 3.8pp</span></div>
+        <div class="trend-row"><span class="trend-name">BOM config error rate</span><div class="trend-bar-wrap"><div class="trend-bar" style="width:5%;background:var(--accent2)"></div></div><span class="trend-val" style="color:var(--accent2)">0.4% ▼ 98%</span></div>
+        <div class="trend-row"><span class="trend-name">Avg quote cycle time</span><div class="trend-bar-wrap"><div class="trend-bar" style="width:58%;background:var(--accent)"></div></div><span class="trend-val" style="color:var(--accent)">4.6d ▼ 8.3%</span></div>
+        <div class="trend-row"><span class="trend-name">Forecast accuracy (MAP)</span><div class="trend-bar-wrap"><div class="trend-bar" style="width:78%;background:var(--accent2)"></div></div><span class="trend-val" style="color:var(--accent2)">+40% ▲</span></div>
+        <div class="trend-row"><span class="trend-name">Win rate</span><div class="trend-bar-wrap"><div class="trend-bar" style="width:62%;background:var(--accent)"></div></div><span class="trend-val" style="color:var(--accent)">38.4% ▲ 5.2pp</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Chart defaults
+Chart.defaults.color='#527478';
+Chart.defaults.borderColor='#1a2e30';
+Chart.defaults.font.family='Segoe UI, system-ui, sans-serif';
+Chart.defaults.font.size=10;
+
+const months11=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov'];
+const months18=['Jan\'16','Mar','May','Jul','Sep','Nov','Jan\'17','Mar','May','Jul','Sep','Nov'];
+
+function lineOpts(yLabel,extra){
+  return{responsive:true,maintainAspectRatio:true,plugins:{legend:{position:'top',labels:{boxWidth:10,padding:12,font:{size:10}}},tooltip:{mode:'index',intersect:false}},scales:{x:{grid:{color:'#0f1e20'},ticks:{font:{size:9}}},y:{grid:{color:'#0f1e20'},ticks:{font:{size:9},callback:v=>yLabel?yLabel(v):v}}}, ...extra};
+}
+
+// Revenue chart
+new Chart(document.getElementById('c-revenue'),{
+  type:'bar',
+  data:{labels:months11,
+    datasets:[
+      {label:'Total Revenue ($M)',data:[7.2,7.8,8.1,8.6,9.2,9.8,10.1,10.4,10.8,11.2,11.6],backgroundColor:'rgba(0,201,200,.15)',borderColor:'#00c9c8',borderWidth:1.5,borderRadius:3,type:'bar'},
+      {label:'CPQ-Attributed ($M)',data:[1.2,1.8,2.4,2.9,3.2,3.6,3.9,4.1,4.4,4.6,4.8],borderColor:'#00e5b0',backgroundColor:'rgba(0,229,176,.08)',borderWidth:2,tension:.4,type:'line',pointRadius:3,pointBackgroundColor:'#00e5b0',fill:true}
+    ]},
+  options:lineOpts(v=>'$'+v+'M')
+});
+
+// Cycle time
+new Chart(document.getElementById('c-cycle'),{
+  type:'line',
+  data:{labels:months11,
+    datasets:[
+      {label:'Avg Cycle Time (days)',data:[5.0,4.95,4.88,4.80,4.74,4.70,4.65,4.62,4.58,4.60,4.56],borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,.08)',borderWidth:2,tension:.4,pointRadius:3,pointBackgroundColor:'#f59e0b',fill:true},
+      {label:'Target (4.5d)',data:[4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5],borderColor:'#527478',borderWidth:1,borderDash:[4,4],pointRadius:0}
+    ]},
+  options:lineOpts(v=>v+'d')
+});
+
+// Product mix donut
+new Chart(document.getElementById('c-productmix'),{
+  type:'doughnut',
+  data:{labels:['ETO Generators','CTO Generators','Switches'],datasets:[{data:[47.2,38.6,26.6],backgroundColor:['#00c9c8','#00e5b0','#a78bfa'],borderColor:'#0e1a1c',borderWidth:2}]},
+  options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false}},cutout:'65%'}
+});
+
+// Channel revenue
+new Chart(document.getElementById('c-channel-rev'),{
+  type:'line',
+  data:{labels:months18,
+    datasets:[
+      {label:'Channel Revenue ($M)',data:[1.6,1.7,1.8,2.0,2.2,2.5,2.8,3.2,3.8,4.2,4.6,5.0,5.2,5.4,5.6,5.8,5.9,6.2],borderColor:'#00e5b0',backgroundColor:'rgba(0,229,176,.1)',borderWidth:2,tension:.4,pointRadius:2,pointBackgroundColor:'#00e5b0',fill:true},
+      {label:'Baseline run-rate',data:[1.67,1.67,1.67,1.67,1.67,1.67,1.67,1.67,1.67,1.67,1.67,1.67,1.67,1.67,1.67,1.67,1.67,1.67],borderColor:'#527478',borderWidth:1,borderDash:[4,4],pointRadius:0}
+    ]},
+  options:lineOpts(v=>'$'+v+'M')
+});
+
+// Cumulative dealers
+new Chart(document.getElementById('c-dealers'),{
+  type:'line',
+  data:{labels:months18,
+    datasets:[
+      {label:'Cumulative Dealers',data:[20,42,78,120,175,230,295,370,450,530,610,690,760,830,890,940,990,1047],borderColor:'#00c9c8',backgroundColor:'rgba(0,201,200,.1)',borderWidth:2,tension:.4,pointRadius:2,pointBackgroundColor:'#00c9c8',fill:true},
+      {label:'Target (1,000)',data:[1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000],borderColor:'#527478',borderWidth:1,borderDash:[4,4],pointRadius:0}
+    ]},
+  options:lineOpts()
+});
+
+// Monthly onboarding rate
+new Chart(document.getElementById('c-onboarding-rate'),{
+  type:'bar',
+  data:{labels:months18,
+    datasets:[{label:'New Dealers / Month',data:[20,22,36,42,55,55,65,75,80,80,80,80,70,70,60,50,50,57],backgroundColor:months18.map((_,i)=>i<12?'rgba(0,201,200,.4)':'rgba(0,229,176,.4)'),borderColor:months18.map((_,i)=>i<12?'#00c9c8':'#00e5b0'),borderWidth:1,borderRadius:3}]},
+  options:lineOpts()
+});
+
+// Geo donut
+new Chart(document.getElementById('c-geo'),{
+  type:'doughnut',
+  data:{labels:['NA','APAC','EMEA'],datasets:[{data:[38.1,18.4,11.9],backgroundColor:['#00c9c8','#00e5b0','#a78bfa'],borderColor:'#0e1a1c',borderWidth:2}]},
+  options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false}},cutout:'65%'}
+});
+
+// Dealer table
+const dealers=[
+  ['Pacific Power','APAC','$1.82M','147','+68%'],
+  ['Allied Energy NA','NA','$1.64M','132','+44%'],
+  ['Summit Industrial','NA','$1.47M','118','+51%'],
+  ['Horizon Power','APAC','$1.38M','111','+72%'],
+  ['CoreGen Solutions','EMEA','$1.21M','98','+38%'],
+  ['Delta Power','NA','$1.18M','94','+29%'],
+  ['AsiaPower Ltd','APAC','$1.09M','88','+81%'],
+  ['National Grid Svcs','NA','$0.98M','79','+22%'],
+  ['ProEnergy EMEA','EMEA','$0.86M','69','+34%'],
+  ['TechPower Group','NA','$0.78M','62','+18%'],
+];
+const tbody=document.getElementById('dealer-table');
+dealers.forEach((d,i)=>{
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td>${i+1}</td><td><strong>${d[0]}</strong></td><td>${d[1]}</td><td class="pos">${d[2]}</td><td>${d[3]}</td><td><span class="cc-badge badge-ok">Active</span></td><td class="pos">${d[4]}</td>`;
+  tbody.appendChild(tr);
+});
+
+// Requote & rejection
+new Chart(document.getElementById('c-requote'),{
+  type:'line',
+  data:{labels:months18,
+    datasets:[
+      {label:'Requote Rate (%)',data:[12.3,12.1,11.8,11.4,11.0,10.6,10.2,9.8,9.6,9.4,9.2,9.0,8.8,8.7,8.5,8.4,8.3,8.2],borderColor:'#ef4444',backgroundColor:'rgba(239,68,68,.08)',borderWidth:2,tension:.4,pointRadius:2,pointBackgroundColor:'#ef4444',fill:true},
+      {label:'Rejection Rate (%)',data:[15.2,15.0,14.6,14.2,13.8,13.4,13.0,12.6,12.4,12.2,12.0,11.8,11.6,11.5,11.4,11.4,11.4,11.4],borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,.06)',borderWidth:2,tension:.4,pointRadius:2,pointBackgroundColor:'#f59e0b',fill:true}
+    ]},
+  options:lineOpts(v=>v+'%')
+});
+
+// Forecast accuracy
+new Chart(document.getElementById('c-forecast'),{
+  type:'line',
+  data:{labels:months18,
+    datasets:[
+      {label:'MAP Index (baseline=100)',data:[100,102,104,108,112,116,120,124,128,130,132,134,136,136,138,138,139,140],borderColor:'#00e5b0',backgroundColor:'rgba(0,229,176,.1)',borderWidth:2,tension:.4,pointRadius:2,pointBackgroundColor:'#00e5b0',fill:true},
+      {label:'Target (140)',data:[140,140,140,140,140,140,140,140,140,140,140,140,140,140,140,140,140,140],borderColor:'#527478',borderWidth:1,borderDash:[4,4],pointRadius:0}
+    ]},
+  options:lineOpts()
+});
+
+// Quote volume vs cycle
+new Chart(document.getElementById('c-volume'),{
+  type:'bar',
+  data:{labels:months11,
+    datasets:[
+      {label:'Quotes Processed',data:[352,380,410,468,520,568,622,690,740,800,847],backgroundColor:'rgba(0,201,200,.2)',borderColor:'#00c9c8',borderWidth:1.5,borderRadius:3,type:'bar',yAxisID:'y'},
+      {label:'Avg Cycle Time (days)',data:[5.0,4.95,4.88,4.80,4.74,4.70,4.65,4.62,4.58,4.60,4.56],borderColor:'#f59e0b',borderWidth:2,tension:.4,pointRadius:3,pointBackgroundColor:'#f59e0b',type:'line',yAxisID:'y1'}
+    ]},
+  options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{position:'top',labels:{boxWidth:10,padding:10,font:{size:10}}},tooltip:{mode:'index',intersect:false}},scales:{x:{grid:{color:'#0f1e20'},ticks:{font:{size:9}}},y:{grid:{color:'#0f1e20'},ticks:{font:{size:9}},title:{display:true,text:'Quotes',font:{size:9},color:'#527478'}},y1:{position:'right',grid:{display:false},ticks:{font:{size:9},callback:v=>v+'d'},title:{display:true,text:'Days',font:{size:9},color:'#527478'}}}}
+});
+
+// Tab switching
+function showTab(t){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(tb=>tb.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// Milestone
+function showMilestone(msg){
+  const el=document.getElementById('milestone-msg');
+  el.textContent=msg;el.style.display='block';
+  setTimeout(()=>el.style.display='none',4000);
+}
+
+function updatePeriod(){
+  // Visual only — period filter simulation
+}
+</script>
+</body></html>
