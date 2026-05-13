@@ -10,7 +10,7 @@ a{color:var(--accent);text-decoration:none}
 .page.active{display:block}
 nav{position:sticky;top:0;z-index:100;background:rgba(9,13,14,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:56px}
 .nav-name{font-size:14px;font-weight:600;color:var(--txt);cursor:pointer}
-.nav-links{display:flex;gap:1.5rem}
+.nav-links{display:flex;gap:1.5rem;align-items:center}
 .nav-links a{font-size:13px;color:var(--txt2);transition:color .2s;cursor:pointer}
 .nav-links a:hover,.nav-links a.active{color:var(--txt)}
 .container{max-width:860px;margin:0 auto;padding:0 2rem}
@@ -29,7 +29,6 @@ h2{font-size:1.6rem;font-weight:600;margin-bottom:1.5rem;letter-spacing:-.01em}
 .tags{display:flex;flex-wrap:wrap;gap:6px}
 .dot{width:6px;height:6px;border-radius:50%;background:var(--accent2);display:inline-block}
 .divider{border:none;border-top:1px solid var(--border);margin:2rem 0}
-
 /* HERO */
 .hero{padding:6rem 0 3rem;border-bottom:1px solid var(--border)}
 .hero-tag{display:inline-block;background:#051e1e;color:var(--accent);font-size:12px;font-weight:500;padding:4px 12px;border-radius:20px;margin-bottom:1.5rem;border:1px solid #0a4040;letter-spacing:.04em;text-transform:uppercase}
@@ -39,10 +38,15 @@ h1{font-size:clamp(2rem,5vw,3rem);font-weight:700;line-height:1.15;letter-spacin
 .hero-meta{display:flex;gap:1.5rem;margin-top:2.5rem;flex-wrap:wrap}
 .hero-meta span{font-size:13px;color:var(--txt3);display:flex;align-items:center;gap:6px}
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-top:3rem}
-.stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.2rem 1rem;text-align:center}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.2rem 1rem;text-align:center;cursor:pointer;transition:border-color .2s,transform .2s,box-shadow .2s;position:relative;user-select:none}
+.stat-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,201,200,.1)}
+.stat-card.no-link{cursor:default}
+.stat-card.no-link:hover{transform:none;box-shadow:none;border-color:var(--border)}
 .stat-num{font-size:1.7rem;font-weight:700;color:var(--accent);line-height:1}
 .stat-num.t{color:var(--accent2)}
 .stat-label{font-size:11px;color:var(--txt3);margin-top:6px;text-transform:uppercase;letter-spacing:.05em}
+.stat-tooltip{position:fixed;background:var(--bg2);border:1px solid var(--accent);border-radius:6px;padding:6px 10px;font-size:11px;color:var(--txt2);z-index:999;pointer-events:none;max-width:200px;line-height:1.4;display:none;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+/* PREVIEW */
 .home-preview{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:2rem}
 @media(max-width:600px){.home-preview{grid-template-columns:1fr}}
 .preview-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;cursor:pointer;transition:border-color .2s}
@@ -50,7 +54,6 @@ h1{font-size:clamp(2rem,5vw,3rem);font-weight:700;line-height:1.15;letter-spacin
 .preview-card h3{font-size:.95rem;margin-bottom:.5rem}
 .preview-card p{font-size:13px;color:var(--txt2)}
 .preview-card .arr{color:var(--accent);float:right;font-size:16px}
-
 /* ABOUT */
 .about-grid{display:grid;grid-template-columns:1fr 2fr;gap:3rem;align-items:start}
 @media(max-width:600px){.about-grid{grid-template-columns:1fr}}
@@ -62,7 +65,11 @@ h1{font-size:clamp(2rem,5vw,3rem);font-weight:700;line-height:1.15;letter-spacin
 .tl-content{padding-top:4px}
 .tl-content strong{font-size:14px;color:var(--txt);display:block}
 .tl-content span{font-size:12px;color:var(--txt3)}
-
+/* SKILLS */
+.skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.skill-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem}
+.skill-card-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.skill-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
 /* EXPERIENCE */
 .exp-card{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden}
 .exp-header{padding:1.25rem 1.5rem;cursor:pointer;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem}
@@ -79,7 +86,6 @@ h1{font-size:clamp(2rem,5vw,3rem);font-weight:700;line-height:1.15;letter-spacin
 .badge{display:inline-flex;align-items:center;font-size:11px;padding:2px 8px;border-radius:12px;margin-left:6px;vertical-align:middle}
 .badge-g{background:#051a14;color:#00e5b0;border:1px solid #0a3828}
 .badge-p{background:#051e1e;color:#00c9c8;border:1px solid #0a4040}
-
 /* PROJECTS */
 .projects-grid{display:grid;gap:20px}
 .proj-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;cursor:pointer;transition:border-color .2s}
@@ -99,23 +105,6 @@ h1{font-size:clamp(2rem,5vw,3rem);font-weight:700;line-height:1.15;letter-spacin
 .proj-expand li strong{color:var(--txt);font-weight:500}
 .proj-expand li em{color:var(--accent2);font-style:normal}
 .demo-btn{display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:12px;font-weight:600;color:var(--accent);background:#051e1e;border:1px solid #0a4040;padding:4px 12px;border-radius:20px;text-decoration:none}
-
-/* CONTACT */
-.contact-grid{display:grid;grid-template-columns:1fr 1.6fr;gap:3rem;align-items:start}
-@media(max-width:640px){.contact-grid{grid-template-columns:1fr}}
-.contact-info{display:flex;flex-direction:column;gap:16px}
-.contact-item{display:flex;align-items:flex-start;gap:12px}
-.contact-icon{width:36px;height:36px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-.contact-item strong{font-size:13px;color:var(--txt);display:block}
-.contact-item a,.contact-item span{font-size:13px;color:var(--txt2)}
-form{display:flex;flex-direction:column;gap:14px}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:500px){.form-row{grid-template-columns:1fr}}
-label{font-size:12px;color:var(--txt3);display:block;margin-bottom:4px}
-input,textarea,select{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--txt);font-size:14px;font-family:inherit;transition:border-color .2s;outline:none}
-input:focus,textarea:focus{border-color:var(--accent)}
-textarea{resize:vertical;min-height:120px}
-
 /* CAROUSEL */
 .carousel-outer{position:relative;margin-bottom:1.5rem}
 .carousel-viewport{overflow:hidden;border-radius:12px}
@@ -136,8 +125,19 @@ textarea{resize:vertical;min-height:120px}
 .carousel-arrow.next{right:-16px}
 .carousel-dots{display:flex;justify-content:center;gap:6px;margin-top:12px}
 .carousel-dot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .2s;border:none;padding:0}
-.carousel-dot.active{transform:scale(1.3)}
-
+/* CONTACT */
+.contact-grid{display:grid;grid-template-columns:1fr 1.6fr;gap:3rem;align-items:start}
+@media(max-width:640px){.contact-grid{grid-template-columns:1fr}}
+.contact-item{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px}
+.contact-icon{width:36px;height:36px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.contact-item strong{font-size:13px;color:var(--txt);display:block}
+.contact-item a,.contact-item span{font-size:13px;color:var(--txt2)}
+form{display:flex;flex-direction:column;gap:14px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+label{font-size:12px;color:var(--txt3);display:block;margin-bottom:4px}
+input,textarea,select{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--txt);font-size:14px;font-family:inherit;transition:border-color .2s;outline:none}
+input:focus,textarea:focus{border-color:var(--accent)}
+textarea{resize:vertical;min-height:120px}
 footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--txt3)}
 .footer-links{display:flex;gap:1.5rem}
 .footer-links a{font-size:12px;color:var(--txt3);cursor:pointer}
@@ -155,7 +155,7 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justi
     <a onclick="go('experience')" id="nl-experience">Experience</a>
     <a onclick="go('projects')" id="nl-projects">Projects</a>
     <a onclick="go('contact')" id="nl-contact">Contact</a>
-    <a href="resume.pdf" download="Venkatraman_Raguraman_Resume.pdf" style="display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:6px;background:#051e1e;border:1px solid #0a4040;color:var(--accent);font-size:12px;font-weight:600;text-decoration:none;transition:all .15s" onmouseover="this.style.background='#0a3030'" onmouseout="this.style.background='#051e1e'">↓ Resume</a>
+    <a href="resume.pdf" download="Venkatraman_Raguraman_Resume.pdf" style="display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:6px;background:#051e1e;border:1px solid #0a4040;color:var(--accent);font-size:12px;font-weight:600;text-decoration:none" onmouseover="this.style.background='#0a3030'" onmouseout="this.style.background='#051e1e'">↓ Resume</a>
   </div>
 </nav>
 
@@ -176,18 +176,46 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justi
       <span><span class="dot"></span>Oracle Inc. · Principal PM</span>
       <span><span class="dot"></span>Six Sigma Black Belt · CSCP</span>
     </div>
-    <div class="stats-grid">
-      <div class="stat-card"><div class="stat-num">$3M+</div><div class="stat-label">Six Sigma savings</div></div>
-      <div class="stat-card"><div class="stat-num t">60%</div><div class="stat-label">Cloud SaaS fleet growth</div></div>
-      <div class="stat-card"><div class="stat-num">0→1</div><div class="stat-label">MES implementation</div></div>
-      <div class="stat-card"><div class="stat-num t">8</div><div class="stat-label">AI agents in production</div></div>
-      <div class="stat-card"><div class="stat-num">15+</div><div class="stat-label">Factories deployed</div></div>
-      <div class="stat-card"><div class="stat-num t">$40M</div><div class="stat-label">CPQ revenue impact</div></div>
-      <div class="stat-card"><div class="stat-num">$90M</div><div class="stat-label">Channel growth</div></div>
-      <div class="stat-card"><div class="stat-num t">70%</div><div class="stat-label">Defect reduction</div></div>
-      <div class="stat-card"><div class="stat-num">98%</div><div class="stat-label">BOM error reduction</div></div>
-      <div class="stat-card"><div class="stat-num t">17+</div><div class="stat-label">Years experience</div></div>
+
+    <!-- KPI GRID — indices match projects array order below -->
+    <div class="stats-grid" id="stats-grid">
+      <!-- proj 0: Agentic AI Workspaces -->
+      <div class="stat-card" data-val="8" data-color="t" data-tip="8 autonomous AI agents in production — Disposition, Resource Change, Work Order, Operations Assignment, and more" onclick="goProj(0)">
+        <div class="stat-num t" id="sn0">8</div><div class="stat-label">AI agents in production</div>
+      </div>
+      <!-- proj 1: Connected Worker MES Platform -->
+      <div class="stat-card" data-special="0→1" data-tip="Built Oracle Manufacturing Cloud MES from 0 to 1 — first-ever connected worker platform deployed to 15+ factories" onclick="goProj(1)">
+        <div class="stat-num" id="sn1">0→1</div><div class="stat-label">MES implementation</div>
+      </div>
+      <div class="stat-card" data-val="15" data-suffix="+" data-tip="15+ regulated factories live on Oracle Manufacturing Cloud — discrete, process, and flow manufacturing" onclick="goProj(1)">
+        <div class="stat-num" id="sn2">15+</div><div class="stat-label">Factories deployed</div>
+      </div>
+      <div class="stat-card" data-val="60" data-suffix="%" data-color="t" data-tip="60% growth in Oracle Manufacturing Cloud SaaS customer fleet under my product ownership" onclick="goProj(1)">
+        <div class="stat-num t" id="sn3">60%</div><div class="stat-label">Cloud SaaS fleet growth</div>
+      </div>
+      <!-- proj 5: CPQ -->
+      <div class="stat-card" data-val="40" data-prefix="$" data-suffix="M" data-color="t" data-tip="$40M in revenue attributed to Salesforce CPQ for Engineer-to-Order at Cummins" onclick="goProj(5)">
+        <div class="stat-num t" id="sn4">$40M</div><div class="stat-label">CPQ revenue impact</div>
+      </div>
+      <!-- proj 6: Dealer Portal -->
+      <div class="stat-card" data-val="90" data-prefix="$" data-suffix="M" data-tip="Channel revenue grew $20M → $90M in 18 months via the B2B dealer portal" onclick="goProj(6)">
+        <div class="stat-num" id="sn5">$90M</div><div class="stat-label">Channel growth</div>
+      </div>
+      <!-- proj 8: Six Sigma -->
+      <div class="stat-card" data-val="3" data-prefix="$" data-suffix="M+" data-color="t" data-tip="$3M+ in verified Six Sigma project savings across Cummins — DMAIC, VSM, portfolio optimization" onclick="goProj(8)">
+        <div class="stat-num t" id="sn6">$3M+</div><div class="stat-label">Six Sigma savings</div>
+      </div>
+      <div class="stat-card" data-val="70" data-suffix="%" data-tip="70% reduction in field defects through structured root-cause analysis and CAPA at Cummins" onclick="goProj(8)">
+        <div class="stat-num" id="sn7">70%</div><div class="stat-label">Defect reduction</div>
+      </div>
+      <div class="stat-card" data-val="98" data-suffix="%" data-color="t" data-tip="98% reduction in BOM configuration errors after building the product-data hub at Cummins" onclick="goProj(5)">
+        <div class="stat-num t" id="sn8">98%</div><div class="stat-label">BOM error reduction</div>
+      </div>
+      <div class="stat-card no-link" data-val="17" data-suffix="+" data-tip="17+ years spanning factory ops, enterprise SaaS, and frontier AI product management">
+        <div class="stat-num" id="sn9">17+</div><div class="stat-label">Years experience</div>
+      </div>
     </div>
+    <div class="stat-tooltip" id="stat-tooltip"></div>
   </div>
 
   <section>
@@ -196,19 +224,16 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justi
     <p class="txt2" style="margin-bottom:1rem;font-size:14px">Live wireframes and dashboards built to showcase real products and outcomes — click any to explore.</p>
     <div style="display:flex;align-items:flex-start;gap:8px;background:#0a1a1c;border:1px solid #1a3030;border-left:3px solid var(--accent);border-radius:6px;padding:9px 12px;margin-bottom:1.5rem">
       <span style="font-size:14px;flex-shrink:0;margin-top:1px">🔒</span>
-      <p style="font-size:11px;color:var(--txt3);line-height:1.6;margin:0"><strong style="color:var(--txt2);font-weight:500">Confidentiality notice:</strong> All demos and dashboards on this site are representative illustrations. They reflect the overall design thinking, user experience patterns, and business impact achieved — not proprietary data, internal systems, or confidential information belonging to Oracle, Cummins, or any other employer. No trade secrets or IP have been disclosed.</p>
+      <p style="font-size:11px;color:var(--txt3);line-height:1.6;margin:0"><strong style="color:var(--txt2);font-weight:500">Confidentiality notice:</strong> All demos and dashboards are representative illustrations reflecting overall design thinking, UX patterns, and business impact achieved — not proprietary data, internal systems, or confidential information belonging to Oracle, Cummins, or any other employer.</p>
     </div>
-
     <div class="carousel-outer">
-      <div class="carousel-viewport" id="carousel-vp"
-           onmouseenter="pauseCarousel()" onmouseleave="resumeCarousel()">
+      <div class="carousel-viewport" id="carousel-vp" onmouseenter="pauseCarousel()" onmouseleave="resumeCarousel()">
         <div class="carousel-track" id="carousel-track"></div>
       </div>
       <button class="carousel-arrow prev" onclick="carouselStep(-1)">‹</button>
       <button class="carousel-arrow next" onclick="carouselStep(1)">›</button>
       <div class="carousel-dots" id="carousel-dots"></div>
     </div>
-
     <hr style="border:none;border-top:1px solid var(--border);margin:2.5rem 0">
     <div class="section-label">Explore</div>
     <h2>What you'll find here</h2>
@@ -241,12 +266,12 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justi
       </div>
       <div>
         <p class="txt2" style="margin-bottom:1rem">I'm a Principal Product Manager (Tech) with a career that bridges the physical world of manufacturing and supply chain with modern AI product practice. My edge is translating <strong style="color:var(--txt)">complex domain workflows</strong> — quality dispositions, BOM management, change orders, workforce qualification — into clean data models, scalable APIs, and AI products that operators and engineers actually adopt.</p>
-        <p class="txt2" style="margin-bottom:1rem">At <strong style="color:var(--txt)">Oracle</strong>, I own the roadmap for Manufacturing Cloud, shipping AI-native workspaces, autonomous agents, and digital-thread experiences to 15+ regulated factories across NA, EU, and APAC. Before that, at <strong style="color:var(--txt)">Cummins</strong>, I spent eight years transforming Lead-to-Cash processes — launching Salesforce CPQ, building a dealer portal that grew channel revenue from $20M to $90M, and applying Six Sigma to cut field defects by 70%.</p>
+        <p class="txt2" style="margin-bottom:1rem">At <strong style="color:var(--txt)">Oracle</strong>, I own the roadmap for Manufacturing Cloud, shipping AI-native workspaces, connected worker platforms, and digital-thread experiences to 15+ regulated factories across NA, EU, and APAC. Before that, at <strong style="color:var(--txt)">Cummins</strong>, I spent eight years transforming Lead-to-Cash processes — launching Salesforce CPQ, building a dealer portal that grew channel revenue from $20M to $90M, and applying Six Sigma to cut field defects by 70%.</p>
         <p class="txt2">I hold a <strong style="color:var(--txt)">Six Sigma Black Belt</strong> and CSCP, and I care deeply about responsible AI in regulated environments — guardrails, evals, and human-in-the-loop aren't afterthoughts in my practice, they're core design decisions.</p>
         <hr class="divider">
         <div class="section-label" style="margin-bottom:1rem">Career Timeline</div>
         <div class="timeline">
-          <div class="tl-item"><div class="tl-icon">🤖</div><div class="tl-content"><strong>Oracle Inc. — Principal PM (Tech)</strong><span>2021 – Present · Redwood City, CA · AI-native MES/QMS, agentic AI</span></div></div>
+          <div class="tl-item"><div class="tl-icon">🤖</div><div class="tl-content"><strong>Oracle Inc. — Principal PM (Tech)</strong><span>2021 – Present · Redwood City, CA · AI-native MES/QMS, agentic AI, connected worker</span></div></div>
           <div class="tl-item"><div class="tl-icon">⚙️</div><div class="tl-content"><strong>Cummins Inc. — Senior PM (Tech)</strong><span>2013 – 2021 · Minneapolis, MN · CPQ, dealer portals, Lead-to-Cash</span></div></div>
           <div class="tl-item"><div class="tl-icon">🎓</div><div class="tl-content"><strong>University of Michigan</strong><span>2012 · M.S. Industrial Engineering &amp; Operations Research</span></div></div>
           <div class="tl-item"><div class="tl-icon">🏭</div><div class="tl-content"><strong>Ashok Leyland — Deputy Manager, Supply Chain</strong><span>2008 – 2011 · Chennai, India · NPI supply base, manufacturing ops</span></div></div>
@@ -265,89 +290,39 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justi
     <div class="section-label">Skills</div>
     <h2>What I bring</h2>
     <p class="txt2" style="margin-bottom:2rem;font-size:14px">17+ years of skills across AI product management, enterprise software, manufacturing operations, supply chain, and continuous improvement — built through shipping real products in regulated, high-stakes environments.</p>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-
-      <div class="card">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-          <div style="width:32px;height:32px;border-radius:8px;background:#051e1e;border:1px solid #0a4040;display:flex;align-items:center;justify-content:center;font-size:16px">✦</div>
-          <div><div style="font-size:13px;font-weight:600;color:var(--txt)">AI Product Management</div><div style="font-size:11px;color:var(--txt3)">Core practice · 4 years</div></div>
-        </div>
-        <div class="tags">
-          <span class="tag">Agentic AI</span><span class="tag">AI agents</span><span class="tag">Multi-agent orchestration</span><span class="tag">LLM application design</span><span class="tag">RAG</span><span class="tag">Prompt engineering</span><span class="tag">Evaluation frameworks</span><span class="tag">LLM-as-judge</span><span class="tag">Guardrails</span><span class="tag">Responsible AI</span><span class="tag">Human-in-the-loop</span><span class="tag">Copilot UX</span><span class="tag">AI observability</span><span class="tag">Fine-tuning</span><span class="tag">Latency / cost trade-offs</span>
-        </div>
+    <div class="skills-grid">
+      <div class="skill-card">
+        <div class="skill-card-header"><div class="skill-icon" style="background:#051e1e;border:1px solid #0a4040">✦</div><div><div style="font-size:13px;font-weight:600;color:var(--txt)">AI Product Management</div><div style="font-size:11px;color:var(--txt3)">Core practice · 4 years</div></div></div>
+        <div class="tags"><span class="tag">Agentic AI</span><span class="tag">AI agents</span><span class="tag">Multi-agent orchestration</span><span class="tag">LLM application design</span><span class="tag">RAG</span><span class="tag">Prompt engineering</span><span class="tag">Evaluation frameworks</span><span class="tag">LLM-as-judge</span><span class="tag">Guardrails</span><span class="tag">Responsible AI</span><span class="tag">Human-in-the-loop</span><span class="tag">Copilot UX</span><span class="tag">AI observability</span><span class="tag">Fine-tuning</span><span class="tag">Latency / cost trade-offs</span></div>
       </div>
-
-      <div class="card">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-          <div style="width:32px;height:32px;border-radius:8px;background:#0e2820;border:1px solid #1a4030;display:flex;align-items:center;justify-content:center;font-size:16px">◈</div>
-          <div><div style="font-size:13px;font-weight:600;color:var(--txt)">Product Strategy & Execution</div><div style="font-size:11px;color:var(--txt3)">17+ years</div></div>
-        </div>
-        <div class="tags">
-          <span class="tag">Product roadmap</span><span class="tag">Product vision</span><span class="tag">OKRs / KPIs</span><span class="tag">Go-to-Market (GTM)</span><span class="tag">Agile / Scrum</span><span class="tag">Sprint planning</span><span class="tag">Backlog refinement</span><span class="tag">User stories</span><span class="tag">Customer discovery</span><span class="tag">Pilot governance</span><span class="tag">Release management</span><span class="tag">Certified Scrum Master</span><span class="tag">Certified Product Owner</span>
-        </div>
+      <div class="skill-card">
+        <div class="skill-card-header"><div class="skill-icon" style="background:#0e2820;border:1px solid #1a4030">◈</div><div><div style="font-size:13px;font-weight:600;color:var(--txt)">Product Strategy & Execution</div><div style="font-size:11px;color:var(--txt3)">17+ years</div></div></div>
+        <div class="tags"><span class="tag">Product roadmap</span><span class="tag">Product vision</span><span class="tag">OKRs / KPIs</span><span class="tag">Go-to-Market (GTM)</span><span class="tag">Agile / Scrum</span><span class="tag">Sprint planning</span><span class="tag">Backlog refinement</span><span class="tag">User stories</span><span class="tag">Customer discovery</span><span class="tag">Pilot governance</span><span class="tag">Release management</span><span class="tag">Certified Scrum Master</span><span class="tag">Certified Product Owner</span></div>
       </div>
-
-      <div class="card">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-          <div style="width:32px;height:32px;border-radius:8px;background:#0e1a2e;border:1px solid #1a3050;display:flex;align-items:center;justify-content:center;font-size:16px">⬡</div>
-          <div><div style="font-size:13px;font-weight:600;color:var(--txt)">Manufacturing & Supply Chain</div><div style="font-size:11px;color:var(--txt3)">17+ years · Regulated environments</div></div>
-        </div>
-        <div class="tags">
-          <span class="tag">Manufacturing Execution Systems (MES)</span><span class="tag">Quality Management Systems (QMS)</span><span class="tag">Product Lifecycle Management (PLM)</span><span class="tag">Digital thread</span><span class="tag">Digital twin</span><span class="tag">Bill of Materials (BOM)</span><span class="tag">Change orders</span><span class="tag">Batch records</span><span class="tag">Electronic signature</span><span class="tag">Genealogy tracking</span><span class="tag">OT-IT integration</span><span class="tag">Predictive maintenance</span><span class="tag">GxP</span><span class="tag">21 CFR Part 11</span><span class="tag">ISO 9008 Auditor</span>
-        </div>
+      <div class="skill-card">
+        <div class="skill-card-header"><div class="skill-icon" style="background:#0e1a2e;border:1px solid #1a3050">⬡</div><div><div style="font-size:13px;font-weight:600;color:var(--txt)">Manufacturing & Supply Chain</div><div style="font-size:11px;color:var(--txt3)">17+ years · Regulated environments</div></div></div>
+        <div class="tags"><span class="tag">MES</span><span class="tag">QMS</span><span class="tag">PLM</span><span class="tag">Connected Worker</span><span class="tag">Operator Workbench</span><span class="tag">IoT / Edge integration</span><span class="tag">Digital thread</span><span class="tag">Digital twin</span><span class="tag">BOM</span><span class="tag">Change orders</span><span class="tag">Batch records</span><span class="tag">Electronic signature</span><span class="tag">Genealogy</span><span class="tag">OT-IT integration</span><span class="tag">Predictive maintenance</span><span class="tag">GxP</span><span class="tag">21 CFR Part 11</span><span class="tag">ISO 9008 Auditor</span></div>
       </div>
-
-      <div class="card">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-          <div style="width:32px;height:32px;border-radius:8px;background:#1c1205;border:1px solid #3a2a0a;display:flex;align-items:center;justify-content:center;font-size:16px">◆</div>
-          <div><div style="font-size:13px;font-weight:600;color:var(--txt)">Commercial & Go-to-Market</div><div style="font-size:11px;color:var(--txt3)">8 years · B2B enterprise</div></div>
-        </div>
-        <div class="tags">
-          <span class="tag">Order-to-Cash (O2C)</span><span class="tag">Lead-to-Cash</span><span class="tag">Configure-Price-Quote (CPQ)</span><span class="tag">Salesforce CPQ</span><span class="tag">Dealer / partner portals</span><span class="tag">B2B sales enablement</span><span class="tag">Channel management</span><span class="tag">S&OP</span><span class="tag">Demand forecasting</span><span class="tag">Enterprise SaaS (Oracle, Salesforce)</span><span class="tag">Engineer-to-Order (ETO)</span><span class="tag">Configure-to-Order (CTO)</span>
-        </div>
+      <div class="skill-card">
+        <div class="skill-card-header"><div class="skill-icon" style="background:#1c1205;border:1px solid #3a2a0a">◆</div><div><div style="font-size:13px;font-weight:600;color:var(--txt)">Commercial & Go-to-Market</div><div style="font-size:11px;color:var(--txt3)">8 years · B2B enterprise</div></div></div>
+        <div class="tags"><span class="tag">Order-to-Cash</span><span class="tag">Lead-to-Cash</span><span class="tag">CPQ</span><span class="tag">Salesforce CPQ</span><span class="tag">Dealer / partner portals</span><span class="tag">B2B sales enablement</span><span class="tag">Channel management</span><span class="tag">S&OP</span><span class="tag">Demand forecasting</span><span class="tag">Enterprise SaaS</span><span class="tag">ETO / CTO</span></div>
       </div>
-
-      <div class="card">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-          <div style="width:32px;height:32px;border-radius:8px;background:#2a0e1a;border:1px solid #501a30;display:flex;align-items:center;justify-content:center;font-size:16px">●</div>
-          <div><div style="font-size:13px;font-weight:600;color:var(--txt)">Continuous Improvement</div><div style="font-size:11px;color:var(--txt3)">Six Sigma Black Belt · 10+ years</div></div>
-        </div>
-        <div class="tags">
-          <span class="tag">Six Sigma Black Belt (DMAIC)</span><span class="tag">Six Sigma Green Belt</span><span class="tag">Lean manufacturing</span><span class="tag">Kaizen</span><span class="tag">Value stream mapping</span><span class="tag">Kanban</span><span class="tag">Min-Max inventory</span><span class="tag">Square root costing</span><span class="tag">Portfolio optimization</span><span class="tag">Root cause analysis</span><span class="tag">Corrective action (CAPA)</span><span class="tag">Statistical process control</span>
-        </div>
+      <div class="skill-card">
+        <div class="skill-card-header"><div class="skill-icon" style="background:#2a0e1a;border:1px solid #501a30">●</div><div><div style="font-size:13px;font-weight:600;color:var(--txt)">Continuous Improvement</div><div style="font-size:11px;color:var(--txt3)">Six Sigma Black Belt · 10+ years</div></div></div>
+        <div class="tags"><span class="tag">Six Sigma Black Belt (DMAIC)</span><span class="tag">Six Sigma Green Belt</span><span class="tag">Lean manufacturing</span><span class="tag">Kaizen</span><span class="tag">Value stream mapping</span><span class="tag">Kanban</span><span class="tag">Min-Max inventory</span><span class="tag">Square root costing</span><span class="tag">Portfolio optimization</span><span class="tag">Root cause analysis</span><span class="tag">CAPA</span><span class="tag">SPC</span></div>
       </div>
-
-      <div class="card">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-          <div style="width:32px;height:32px;border-radius:8px;background:#1e1a0e;border:1px solid #3a3010;display:flex;align-items:center;justify-content:center;font-size:16px">▦</div>
-          <div><div style="font-size:13px;font-weight:600;color:var(--txt)">Data & Analytics</div><div style="font-size:11px;color:var(--txt3)">Across all roles</div></div>
-        </div>
-        <div class="tags">
-          <span class="tag">SQL</span><span class="tag">Power BI</span><span class="tag">Tableau</span><span class="tag">Adoption dashboards</span><span class="tag">KPI design</span><span class="tag">Data-driven decisions</span><span class="tag">Statistical analysis</span><span class="tag">Sample data analysis</span><span class="tag">Industry benchmarking</span><span class="tag">OEE / production metrics</span>
-        </div>
+      <div class="skill-card">
+        <div class="skill-card-header"><div class="skill-icon" style="background:#1e1a0e;border:1px solid #3a3010">▦</div><div><div style="font-size:13px;font-weight:600;color:var(--txt)">Data & Analytics</div><div style="font-size:11px;color:var(--txt3)">Across all roles</div></div></div>
+        <div class="tags"><span class="tag">SQL</span><span class="tag">Power BI</span><span class="tag">Tableau</span><span class="tag">Adoption dashboards</span><span class="tag">KPI design</span><span class="tag">Statistical analysis</span><span class="tag">Industry benchmarking</span><span class="tag">OEE metrics</span></div>
       </div>
-
-      <div class="card">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-          <div style="width:32px;height:32px;border-radius:8px;background:#0e1a2e;border:1px solid #1a3050;display:flex;align-items:center;justify-content:center;font-size:16px">⊞</div>
-          <div><div style="font-size:13px;font-weight:600;color:var(--txt)">Master Data Management</div><div style="font-size:11px;color:var(--txt3)">Enterprise data governance</div></div>
-        </div>
-        <div class="tags">
-          <span class="tag">MDM strategy &amp; governance</span><span class="tag">Item master setup</span><span class="tag">Data stewardship</span><span class="tag">Audit frameworks</span><span class="tag">PLM-ERP integrations</span><span class="tag">Data cleansing</span><span class="tag">Cutover &amp; UAT</span><span class="tag">CSCP — APICS / ASCM</span>
-        </div>
+      <div class="skill-card">
+        <div class="skill-card-header"><div class="skill-icon" style="background:#0e1a2e;border:1px solid #1a3050">⊞</div><div><div style="font-size:13px;font-weight:600;color:var(--txt)">Master Data Management</div><div style="font-size:11px;color:var(--txt3)">Enterprise data governance</div></div></div>
+        <div class="tags"><span class="tag">MDM strategy &amp; governance</span><span class="tag">Item master setup</span><span class="tag">Data stewardship</span><span class="tag">Audit frameworks</span><span class="tag">PLM-ERP integrations</span><span class="tag">Data cleansing</span><span class="tag">Cutover &amp; UAT</span><span class="tag">CSCP — APICS</span></div>
       </div>
-
-      <div class="card">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-          <div style="width:32px;height:32px;border-radius:8px;background:#1a1530;border:1px solid #302850;display:flex;align-items:center;justify-content:center;font-size:16px">❋</div>
-          <div><div style="font-size:13px;font-weight:600;color:var(--txt)">Leadership & Stakeholder Management</div><div style="font-size:11px;color:var(--txt3)">Cross-functional · Executive</div></div>
-        </div>
-        <div class="tags">
-          <span class="tag">Cross-functional facilitation</span><span class="tag">Offshore team leadership</span><span class="tag">Executive communication</span><span class="tag">Change management</span><span class="tag">Stakeholder engagement</span><span class="tag">Engineering</span><span class="tag">Quality</span><span class="tag">Procurement</span><span class="tag">IT</span><span class="tag">Finance</span><span class="tag">Marketing</span><span class="tag">Planning</span><span class="tag">Industry association engagement</span>
-        </div>
+      <div class="skill-card">
+        <div class="skill-card-header"><div class="skill-icon" style="background:#1a1530;border:1px solid #302850">❋</div><div><div style="font-size:13px;font-weight:600;color:var(--txt)">Leadership & Stakeholder Management</div><div style="font-size:11px;color:var(--txt3)">Cross-functional · Executive</div></div></div>
+        <div class="tags"><span class="tag">Cross-functional facilitation</span><span class="tag">Offshore team leadership</span><span class="tag">Executive communication</span><span class="tag">Change management</span><span class="tag">Stakeholder engagement</span><span class="tag">Engineering</span><span class="tag">Quality</span><span class="tag">Procurement</span><span class="tag">IT</span><span class="tag">Finance</span><span class="tag">Planning</span><span class="tag">Industry association engagement</span></div>
       </div>
-
     </div>
   </section>
 </div>
@@ -365,13 +340,13 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justi
         <div class="exp-toggle">−</div>
       </div>
       <div class="exp-body open">
-        <div class="tags" style="margin-top:1rem"><span class="tag">Agentic AI</span><span class="tag">MES / QMS</span><span class="tag">LLM</span><span class="tag">Digital Thread</span><span class="tag">GxP / 21 CFR</span><span class="tag">OT-IT</span></div>
+        <div class="tags" style="margin-top:1rem"><span class="tag">Agentic AI</span><span class="tag">MES / QMS</span><span class="tag">Connected Worker</span><span class="tag">IoT / Edge</span><span class="tag">Digital Thread</span><span class="tag">GxP / 21 CFR</span></div>
         <ul>
-          <li>Shipped <strong>AI-native workspaces and autonomous agents</strong> — automating change-order propagation, quality dispositions, corrective actions, BOM/routing management, and work-order assignments. <span class="badge badge-g">10+ sites adopted</span></li>
+          <li>Built <strong>0→1 Oracle Manufacturing Cloud MES</strong> — Connected Worker (Operator Workbench) and Supervisor Workbench enabling real-time production reporting, mobile-friendly UI, IoT/Edge integration, and automated transactions. Adopted by 15+ sites across discrete, process, and flow manufacturing.</li>
+          <li>Shipped <strong>AI-native workspaces and autonomous agents</strong> — automating change-order propagation, quality dispositions, corrective actions, BOM/routing, and work-order assignments. <span class="badge badge-g">10+ sites adopted</span></li>
           <li>Defined <strong>evaluation frameworks, guardrails, and human-in-the-loop checkpoints</strong> for agent reliability in regulated environments.</li>
           <li>Implemented <strong>digital-thread experience</strong> with 3D work instructions, redlining, change-order flows, and genealogy tracking under GxP and 21 CFR Part 11.</li>
           <li>Led <strong>OT-IT and HR-system integrations</strong> for skill-based workforce planning, qualification tracking, and real-time process monitoring.</li>
-          <li>Drove a <strong>3-year MES/QMS execution program</strong> to 15+ factories with recurring SaaS subscription conversions.</li>
         </ul>
       </div>
     </div>
@@ -381,10 +356,10 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justi
         <div class="exp-toggle">+</div>
       </div>
       <div class="exp-body">
-        <div class="tags" style="margin-top:1rem"><span class="tag">Salesforce CPQ</span><span class="tag">Six Sigma BB</span><span class="tag">Partner Portal</span><span class="tag">S&amp;OP</span><span class="tag">MDM</span><span class="tag">Power BI</span></div>
+        <div class="tags" style="margin-top:1rem"><span class="tag">Salesforce CPQ</span><span class="tag">Six Sigma BB</span><span class="tag">Partner Portal</span><span class="tag">S&OP</span><span class="tag">MDM</span><span class="tag">Power BI</span></div>
         <ul>
           <li>Launched <strong>Salesforce CPQ</strong> for ETO/CTO — reduced quoting cycle ~8%, contributed ~$40M revenue. <span class="badge badge-p">$40M impact</span></li>
-          <li>Delivered <strong>B2B dealer portal</strong> — grew channel revenue $20M → $90M in 18 months, 1,000+ dealers onboarded. <span class="badge badge-g">$90M channel</span></li>
+          <li>Delivered <strong>B2B dealer portal</strong> — grew channel revenue $20M → $90M in 18 months, 1,000+ dealers. <span class="badge badge-g">$90M channel</span></li>
           <li>Improved <strong>demand forecasting +40% MAP</strong> by feeding option-mix data into S&amp;OP.</li>
           <li>Built <strong>product-data hub</strong> reducing BOM translation errors by 98%.</li>
           <li>Portfolio Optimization via square root costing — <strong>~$800K first-year savings</strong>.</li>
@@ -427,6 +402,18 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justi
 </div>
 
 <!-- PROJECTS -->
+<!-- Index map (matches goProj calls):
+  0: Agentic AI Workspaces
+  1: Connected Worker MES Platform  ← NEW
+  2: AI-Native Supervisor Workspace
+  3: Product Genealogy
+  4: Digital Thread
+  5: Salesforce CPQ
+  6: B2B Dealer Portal
+  7: RV RECT
+  8: Value Stream Mapping
+  9: Portfolio Optimization
+-->
 <div id="projects" class="page">
 <div class="container">
   <section>
@@ -435,6 +422,7 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justi
     <p class="txt2" style="margin-bottom:2rem">Click any project to expand the full case study.</p>
     <div class="projects-grid">
 
+      <!-- 0: Agentic AI Workspaces -->
       <div class="proj-card" onclick="toggleProj(this)">
         <div class="proj-header">
           <div><div class="proj-company">Oracle · 2021–Present</div><h3>Agentic AI Workspaces for Manufacturing</h3><p class="txt2" style="font-size:14px">A broad suite of GenAI features, copilots, and autonomous agents deployed across 10+ regulated factory sites.</p></div>
@@ -450,7 +438,7 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justi
           <p><strong style="color:var(--txt)">Three tiers of AI capability delivered:</strong></p>
           <ul>
             <li><strong>Generative AI features</strong> — shift notes auto-generation and summary handoffs synthesizing production events, exception logs, and KPIs</li>
-            <li><strong>Copilots</strong> — <em>Procedure Advisor</em> (RAG-grounded operator Q&A) and <em>Authoring Assistant</em> (work instruction drafting)</li>
+            <li><strong>Copilots</strong> — <em>Procedure Advisor</em> (RAG-grounded operator Q&amp;A) and <em>Authoring Assistant</em> (work instruction drafting)</li>
             <li><strong>Autonomous agents</strong> — <em>Disposition Assistant</em>, <em>Resource Change Assistant</em>, <em>Work Order Change Assistant</em>, and <em>Operations Assignment Assistant</em></li>
           </ul>
           <p><strong style="color:var(--txt)">Model quality &amp; AI engineering:</strong></p>
@@ -463,6 +451,52 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justi
         </div>
       </div>
 
+      <!-- 1: Connected Worker MES Platform — NEW -->
+      <div class="proj-card" onclick="toggleProj(this)">
+        <div class="proj-header">
+          <div>
+            <div class="proj-company">Oracle · 2024–2025 · 0→1 Platform</div>
+            <h3>Connected Worker &amp; MES Platform</h3>
+            <p class="txt2" style="font-size:14px">Built Oracle's first-ever connected worker platform from the ground up — Operator Workbench and Supervisor Workbench with IoT/Edge integration, automated transactions, and AI agent access. Adopted across 15+ sites in discrete, process, and flow manufacturing.</p>
+          </div>
+          <span style="color:var(--accent);font-size:20px;flex-shrink:0;margin-top:4px">+</span>
+        </div>
+        <div class="tags"><span class="tag">Connected Worker</span><span class="tag">Operator Workbench</span><span class="tag">Supervisor Workbench</span><span class="tag">IoT / Edge</span><span class="tag">Mobile UX</span><span class="tag">Automated Inspection</span><span class="tag">E-signature</span><span class="tag">Discrete</span><span class="tag">Process</span><span class="tag">Flow Mfg</span></div>
+        <div class="proj-outcome">
+          <div class="outcome-pill"><strong>0→1</strong><span>Platform built</span></div>
+          <div class="outcome-pill"><strong>15+</strong><span>Sites adopted</span></div>
+          <div class="outcome-pill"><strong>3</strong><span>Mfg methods supported</span></div>
+          <div class="outcome-pill"><strong>60%</strong><span>SaaS fleet growth</span></div>
+        </div>
+        <div class="proj-expand">
+          <p><strong style="color:var(--txt)">Problem:</strong> Oracle Manufacturing Cloud lacked a connected worker experience — operators had no unified, mobile-friendly interface to receive work instructions, log production, interact with IoT equipment, or access AI agents on the shop floor. Supervisors had no real-time visibility across their lines.</p>
+          <p><strong style="color:var(--txt)">Operator Workbench — key capabilities:</strong></p>
+          <ul>
+            <li><strong>Mobile-first UI</strong> — responsive, tablet- and shop-floor-optimized interface designed for operators with minimal system training</li>
+            <li><strong>IoT/Edge equipment integration</strong> — direct connection to workstation equipment enabling <strong>automated inspection</strong> (sensor-driven pass/fail), <strong>automated work completion</strong> (machine signals close work steps), and <strong>automated resource charging</strong> (materials, tools, labor logged without manual entry)</li>
+            <li><strong>Exception logging &amp; notes</strong> — operators can flag issues, add structured notes, and escalate to supervisors in real time</li>
+            <li><strong>AI agent access</strong> — embedded Procedure Advisor for in-context guidance and Disposition Assistant for quality decisions, directly within the workbench</li>
+            <li><strong>Electronic signatures</strong> — GxP-compliant e-signature workflows at critical steps, supporting 21 CFR Part 11 requirements</li>
+          </ul>
+          <p><strong style="color:var(--txt)">Supervisor Workbench — key capabilities:</strong></p>
+          <ul>
+            <li><strong>Real-time production reporting</strong> — live view of all active work orders, operator assignments, step completion rates, and exception queues across lines</li>
+            <li>Integrated with the AI-native Supervisor Workspace for exception triaging, anomaly detection, and shift report generation</li>
+          </ul>
+          <p><strong style="color:var(--txt)">Manufacturing method support:</strong></p>
+          <ul>
+            <li>Supports <strong>discrete manufacturing</strong> (serial/lot-tracked units, BOM-driven work orders), <strong>process manufacturing</strong> (batch records, formulas, yield tracking), and <strong>flow manufacturing</strong> (rate-based production, continuous reporting)</li>
+          </ul>
+          <p><strong style="color:var(--txt)">Impact:</strong></p>
+          <ul>
+            <li>Adopted by <strong>15+ factory sites</strong> across NA, EU, and APAC within 12 months of launch</li>
+            <li>Drove <strong>60% growth</strong> in the Oracle Manufacturing Cloud SaaS customer fleet</li>
+            <li>Eliminated manual paper-based shop floor transactions at participating sites</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 2: Supervisor Workspace -->
       <div class="proj-card" onclick="toggleProj(this)">
         <div class="proj-header">
           <div><div class="proj-company">Oracle · 2025</div><h3>AI-Native Production Supervisor Workspace</h3><p class="txt2" style="font-size:14px">Multi-agent orchestration platform for shift supervisors — real-time exception triaging, anomaly detection, operator assignment, and AI-drafted shift reports.</p><a href="wireframe-supervisor.html" target="_blank" onclick="event.stopPropagation()" class="demo-btn">▶ View Interactive Demo</a></div>
@@ -483,6 +517,7 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justi
         </div>
       </div>
 
+      <!-- 3: Genealogy -->
       <div class="proj-card" onclick="toggleProj(this)">
         <div class="proj-header">
           <div><div class="proj-company">Oracle · 2026</div><h3>Product Genealogy &amp; Quality Investigation Workspace</h3><p class="txt2" style="font-size:14px">AI-powered workspace for lot/serial tracked products — quality investigations, auto-generated CAPA resolutions, and GxP-compliant reports.</p><a href="wireframe-genealogy.html" target="_blank" onclick="event.stopPropagation()" class="demo-btn">▶ View Interactive Demo</a></div>
@@ -503,6 +538,7 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justi
         </div>
       </div>
 
+      <!-- 4: Digital Thread -->
       <div class="proj-card" onclick="toggleProj(this)">
         <div class="proj-header">
           <div><div class="proj-company">Oracle · 2022–2023</div><h3>Digital Thread &amp; 3D Work Instructions</h3><p class="txt2" style="font-size:14px">End-to-end digital thread with 3D work instructions, redlining, change-order flows, and e-signature for life-sciences manufacturers.</p><a href="wireframe-digital-thread.html" target="_blank" onclick="event.stopPropagation()" class="demo-btn">▶ View Interactive Demo</a></div>
@@ -522,6 +558,7 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justi
         </div>
       </div>
 
+      <!-- 5: CPQ -->
       <div class="proj-card" onclick="toggleProj(this)">
         <div class="proj-header">
           <div><div class="proj-company">Cummins · 2016–2018</div><h3>Salesforce CPQ for Engineer-to-Order</h3><p class="txt2" style="font-size:14px">Configure-price-quote platform for ETO and CTO generators and switches, serving global bid-to-spec markets.</p><a href="wireframe-cpq-dashboard.html" target="_blank" onclick="event.stopPropagation()" class="demo-btn">▶ View Performance Dashboard</a></div>
@@ -541,6 +578,7 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justi
         </div>
       </div>
 
+      <!-- 6: Dealer Portal -->
       <div class="proj-card" onclick="toggleProj(this)">
         <div class="proj-header">
           <div><div class="proj-company">Cummins · 2018–2019</div><h3>B2B Dealer &amp; Partner Portal</h3><p class="txt2" style="font-size:14px">Self-service sales portal for 1,000+ dealers — marketing, ordering, and fulfillment in one platform.</p><a href="wireframe-dealer-portal.html" target="_blank" onclick="event.stopPropagation()" class="demo-btn">▶ View Transformation Story</a></div>
@@ -561,12 +599,13 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justi
         </div>
       </div>
 
+      <!-- 7: RV RECT -->
       <div class="proj-card" onclick="toggleProj(this)">
         <div class="proj-header">
           <div>
             <div class="proj-company">Consulting · RV Industry · 2017 · 🏆 Chairman's Award</div>
             <h3>RV Industry Repair Cycle Time Transformation</h3>
-            <p class="txt2" style="font-size:14px">Cross-industry consulting engagement with RV OEMs, dealer associations, and IT vendors — uncovered root causes of repair delays through dealer fieldwork and data analysis, built a nationwide industry dashboard that drove 40–50% reduction in repair event cycle time.</p>
+            <p class="txt2" style="font-size:14px">Cross-industry consulting engagement with RV OEMs, dealer associations, and IT vendors — fieldwork + data analysis drove 40–50% repair cycle time reduction nationwide.</p>
             <a href="wireframe-rect-dashboard.html" target="_blank" onclick="event.stopPropagation()" class="demo-btn">▶ View Industry Dashboard</a>
           </div>
           <span style="color:var(--accent);font-size:20px;flex-shrink:0;margin-top:4px">+</span>
@@ -578,21 +617,17 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justi
           <div class="outcome-pill"><strong>🏆</strong><span>Chairman's Award</span></div>
         </div>
         <div class="proj-expand">
-          <p><strong style="color:var(--txt)">Discovery:</strong></p>
           <ul>
             <li>Engaged RV Industry Association, RV Dealer Association, OEMs, and IT vendors to frame the problem and align on scope</li>
             <li>Conducted on-site fieldwork at multiple dealerships — interviewed account managers, service technicians, and parts teams</li>
-            <li>Uncovered root causes beyond the assumed "parts lead time" hypothesis: catalog quality, technician readiness, warranty policy bottlenecks, and post-receipt scheduling gaps</li>
-          </ul>
-          <p><strong style="color:var(--txt)">Analysis &amp; Impact:</strong></p>
-          <ul>
-            <li>Partnered with RV dealer IT vendors to extract and analyze repair event timelines across multiple dealerships</li>
-            <li>Decomposed mean RECT into contributing factors and built a nationwide industry dashboard adopted as the standard tracking framework</li>
-            <li>Participating dealerships reduced RECT by <strong style="color:var(--accent2)">40–50%</strong> — recognized with <strong style="color:var(--warn)">Chairman's Award</strong> for sustained impact</li>
+            <li>Uncovered root causes beyond "parts lead time": catalog quality, technician readiness, warranty bottlenecks, and post-receipt scheduling gaps</li>
+            <li>Partnered with IT vendors to analyze repair event timelines; built a nationwide industry dashboard adopted as the standard tracking framework</li>
+            <li>Participating dealerships reduced RECT by <strong style="color:var(--accent2)">40–50%</strong> — recognized with <strong style="color:var(--warn)">Chairman's Award</strong></li>
           </ul>
         </div>
       </div>
 
+      <!-- 8: Value Stream Mapping -->
       <div class="proj-card" onclick="toggleProj(this)">
         <div class="proj-header">
           <div><div class="proj-company">Cummins · 2015 · Six Sigma Black Belt</div><h3>Operational Improvement via Value Stream Mapping</h3><p class="txt2" style="font-size:14px">End-to-end value stream analysis of generator manufacturing lines — eliminating waste, rebalancing flow, and delivering measurable efficiency and space gains.</p></div>
@@ -612,6 +647,7 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justi
         </div>
       </div>
 
+      <!-- 9: Portfolio Optimization -->
       <div class="proj-card" onclick="toggleProj(this)">
         <div class="proj-header">
           <div><div class="proj-company">Cummins · 2017 · Six Sigma Black Belt</div><h3>Portfolio Optimization via Square Root Costing</h3><p class="txt2" style="font-size:14px">Applied square root costing with Finance to quantify the true cost of product complexity — driving option rationalization and first-year savings.</p></div>
@@ -625,7 +661,7 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justi
         </div>
         <div class="proj-expand">
           <ul>
-            <li>Applied square root costing model to quantify fully-loaded cost of each product option including inventory, planning, and supply base complexity</li>
+            <li>Applied square root costing model to quantify fully-loaded cost of each product option</li>
             <li>Ran DMAIC to segment options by revenue vs complexity cost and identify rationalization candidates</li>
             <li>Delivered ~$800K first-year savings; governance framework adopted for future portfolio reviews</li>
           </ul>
@@ -644,9 +680,8 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justi
     <div class="section-label">Contact</div>
     <h2>Let's connect</h2>
     <div class="contact-grid">
-      <div class="contact-info">
-        <p class="txt2" style="font-size:14px;margin-bottom:.5rem">Open to conversations about AI product strategy, enterprise SaaS, manufacturing intelligence, and leadership opportunities.</p>
-        <hr class="divider" style="margin:1rem 0">
+      <div>
+        <p class="txt2" style="font-size:14px;margin-bottom:1.5rem">Open to conversations about AI product strategy, enterprise SaaS, manufacturing intelligence, and leadership opportunities.</p>
         <div class="contact-item"><div class="contact-icon">✉</div><div><strong>Email</strong><a href="mailto:venkatraman.raguraman@gmail.com">venkatraman.raguraman@gmail.com</a></div></div>
         <div class="contact-item"><div class="contact-icon">✆</div><div><strong>Phone</strong><span>612-412-0838</span></div></div>
         <div class="contact-item"><div class="contact-icon">in</div><div><strong>LinkedIn</strong><a href="https://www.linkedin.com/in/venkatraguraman/" target="_blank">venkatraguraman</a></div></div>
@@ -684,6 +719,7 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justi
   <div class="footer-links">
     <a onclick="go('home')">Home</a>
     <a onclick="go('about')">About</a>
+    <a onclick="go('skills')">Skills</a>
     <a onclick="go('experience')">Experience</a>
     <a onclick="go('projects')">Projects</a>
     <a onclick="go('contact')">Contact</a>
@@ -691,7 +727,7 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justi
 </footer>
 
 <script>
-/* ── NAVIGATION ── */
+/* ── NAV ── */
 function go(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
@@ -713,30 +749,28 @@ function goProj(i){
 }
 
 /* ── EXPERIENCE ── */
-function toggleExp(header){
-  const body=header.nextElementSibling;
-  const icon=header.querySelector('.exp-toggle');
-  const open=body.classList.toggle('open');
-  icon.textContent=open?'−':'+';
+function toggleExp(h){
+  const b=h.nextElementSibling,i=h.querySelector('.exp-toggle'),o=b.classList.toggle('open');
+  i.textContent=o?'−':'+';
 }
 
 /* ── PROJECTS ── */
 function toggleProj(card){
-  const exp=card.querySelector('.proj-expand');
-  const icon=card.querySelector('.proj-header span');
-  const open=exp.classList.toggle('open');
-  icon.textContent=open?'−':'+';
+  const exp=card.querySelector('.proj-expand'),icon=card.querySelector('.proj-header span');
+  const o=exp.classList.toggle('open');icon.textContent=o?'−':'+';
 }
 
 /* ── CAROUSEL ── */
+// SLIDES order matches projects index above
 const SLIDES=[
-  {icon:'🤖',company:'Oracle · 2021–Present',title:'Agentic AI Workspaces for Manufacturing',desc:'GenAI features, copilots, and autonomous agents — Disposition, Resource Change, Work Order & Operations Assignment assistants deployed across 10+ factory sites.',tags:['Agentic AI','LLM','RAG','Evals'],file:null,color:'#00c9c8',proj:0},
-  {icon:'👷',company:'Oracle · 2025',title:'AI-Native Production Supervisor Workspace',desc:'Multi-agent orchestration for shift supervisors — real-time exception triaging, anomaly detection, operator assignment, and AI-drafted shift reports.',tags:['Multi-agent','Anomaly Detection','Shift Reporting'],file:'wireframe-supervisor.html',color:'#00e5b0',proj:1},
-  {icon:'🔗',company:'Oracle · 2026',title:'Product Genealogy & Quality Investigation',desc:'AI-powered lot/serial traceability workspace — quality investigations, auto-generated CAPA resolutions, and GxP-compliant reports.',tags:['Genealogy','CAPA','21 CFR','GxP'],file:'wireframe-genealogy.html',color:'#a78bfa',proj:2},
-  {icon:'📐',company:'Oracle · 2022–2023',title:'Digital Thread & 3D Work Instructions',desc:'End-to-end digital thread with 3D work instruction authoring, redlining, change-order flows, and e-signature for life-sciences manufacturers.',tags:['Digital Thread','PLM','E-signature'],file:'wireframe-digital-thread.html',color:'#00c9c8',proj:3},
-  {icon:'📊',company:'Cummins · 2016–2018',title:'CPQ Business Transformation Dashboard',desc:'Executive dashboard tracking commercial sales performance, CPQ-attributed revenue, quote cycle time, dealer channel growth, and operational health metrics.',tags:['CPQ','Revenue','Win Rate','Forecast'],file:'wireframe-cpq-dashboard.html',color:'#f59e0b',proj:4},
-  {icon:'🚀',company:'Cummins · 2018–2019',title:'B2B Dealer Portal Transformation Story',desc:'Unified dealer portal grew channel revenue $20M → $90M, scaled 150 to 1,047 dealers across 5 NA regions, and lifted NPS from 4.5 to 8.2 in 18 months.',tags:['Dealer Portal','$90M Revenue','NPS','Channel'],file:'wireframe-dealer-portal.html',color:'#00e5b0',proj:5},
-  {icon:'🏆',company:'Consulting · RV Industry · 2017',title:'RV Industry RECT Transformation',desc:'Cross-industry engagement with OEMs, dealer associations & IT vendors. Fieldwork + data analysis drove 40–50% repair cycle time reduction. Chairman\'s Award.',tags:['RECT','Data Analysis','Nationwide','Chairman\'s Award'],file:'wireframe-rect-dashboard.html',color:'#f59e0b',proj:6},
+  {icon:'🤖',company:'Oracle · 2021–Present',title:'Agentic AI Workspaces for Manufacturing',desc:'GenAI features, copilots, and autonomous agents — Disposition, Resource Change, Work Order & Operations Assignment assistants deployed across 10+ factory sites.',tags:['Agentic AI','LLM','RAG','Evals'],file:null,color:'#00c9c8'},
+  {icon:'🏭',company:'Oracle · 2024–2025',title:'Connected Worker & MES Platform',desc:'0→1 build of Oracle\'s connected worker platform — Operator Workbench with IoT/Edge integration, automated inspection, automated resource charging, and AI agent access. 15+ sites adopted.',tags:['Connected Worker','IoT/Edge','Mobile UX','0→1'],file:null,color:'#00e5b0'},
+  {icon:'👷',company:'Oracle · 2025',title:'AI-Native Production Supervisor Workspace',desc:'Multi-agent orchestration for shift supervisors — real-time exception triaging, anomaly detection, operator assignment, and AI-drafted shift reports.',tags:['Multi-agent','Anomaly Detection','Shift Reporting'],file:'wireframe-supervisor.html',color:'#a78bfa'},
+  {icon:'🔗',company:'Oracle · 2026',title:'Product Genealogy & Quality Investigation',desc:'AI-powered lot/serial traceability workspace — quality investigations, auto-generated CAPA resolutions, and GxP-compliant reports.',tags:['Genealogy','CAPA','21 CFR','GxP'],file:'wireframe-genealogy.html',color:'#00c9c8'},
+  {icon:'📐',company:'Oracle · 2022–2023',title:'Digital Thread & 3D Work Instructions',desc:'End-to-end digital thread with 3D work instruction authoring, redlining, change-order flows, and e-signature for life-sciences manufacturers.',tags:['Digital Thread','PLM','E-signature'],file:'wireframe-digital-thread.html',color:'#00e5b0'},
+  {icon:'📊',company:'Cummins · 2016–2018',title:'CPQ Business Transformation Dashboard',desc:'Executive dashboard tracking commercial sales performance, CPQ-attributed revenue, quote cycle time, dealer channel growth, and operational health metrics.',tags:['CPQ','Revenue','Win Rate','Forecast'],file:'wireframe-cpq-dashboard.html',color:'#f59e0b'},
+  {icon:'🚀',company:'Cummins · 2018–2019',title:'B2B Dealer Portal Transformation Story',desc:'Unified dealer portal grew channel revenue $20M → $90M, scaled 150 to 1,047 dealers across 5 NA regions, and lifted NPS from 4.5 to 8.2 in 18 months.',tags:['Dealer Portal','$90M Revenue','NPS','Channel'],file:'wireframe-dealer-portal.html',color:'#00e5b0'},
+  {icon:'🏆',company:'Consulting · RV Industry · 2017',title:'RV Industry RECT Transformation',desc:'Cross-industry engagement with OEMs, dealer associations & IT vendors. Fieldwork + data analysis drove 40–50% repair cycle time reduction. Chairman\'s Award.',tags:['RECT','Data Analysis','Nationwide','Chairman\'s Award'],file:'wireframe-rect-dashboard.html',color:'#f59e0b'},
 ];
 
 let cur=0,timer=null;
@@ -755,14 +789,13 @@ function buildCarousel(){
         <div class="carousel-desc">${s.desc}</div>
         <div class="carousel-tags">${s.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
         <div class="carousel-actions">
-          ${s.file?`<a href="${s.file}" target="_blank" style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:${s.color};background:var(--bg3);border:1px solid var(--border);padding:5px 14px;border-radius:20px;text-decoration:none">▶ View Demo</a>`:'<span style="font-size:11px;color:var(--txt3);font-style:italic">Demo coming soon</span>'}
+          ${s.file?`<a href="${s.file}" target="_blank" style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:${s.color};background:var(--bg3);border:1px solid var(--border);padding:5px 14px;border-radius:20px;text-decoration:none">▶ View Demo</a>`:'<span style="font-size:11px;color:var(--txt3);font-style:italic">Case study below</span>'}
           <span onclick="goProj(${i})" style="font-size:12px;color:var(--txt3);cursor:pointer;text-decoration:underline;text-underline-offset:3px">View case study →</span>
         </div>
       </div>
       <div class="carousel-num">${i+1} / ${SLIDES.length}</div>
     </div>`;
     track.appendChild(slide);
-
     const dot=document.createElement('button');
     dot.className='carousel-dot'+(i===0?' active':'');
     dot.style.background=i===0?s.color:'var(--border)';
@@ -770,7 +803,6 @@ function buildCarousel(){
     dotsEl.appendChild(dot);
   });
 }
-
 function goTo(n){
   cur=(n+SLIDES.length)%SLIDES.length;
   track.style.transform=`translateX(-${cur*100}%)`;
@@ -784,8 +816,27 @@ function carouselStep(dir){goTo(cur+dir);resetTimer();}
 function resetTimer(){clearInterval(timer);timer=setInterval(()=>goTo(cur+1),4500);}
 function pauseCarousel(){clearInterval(timer);}
 function resumeCarousel(){resetTimer();}
-
 buildCarousel();
 resetTimer();
+
+/* ── STAT CARDS ── */
+function initStats(){
+  const tooltip=document.getElementById('stat-tooltip');
+  document.querySelectorAll('.stat-card').forEach((card,i)=>{
+    if(!card.dataset.special){
+      const val=parseInt(card.dataset.val);
+      const pre=card.dataset.prefix||'',suf=card.dataset.suffix||'';
+      const el=document.getElementById('sn'+i);
+      if(el){
+        let c=0;const dur=1200,step=16,inc=val/(dur/step);
+        const t=setInterval(()=>{c=Math.min(c+inc,val);el.textContent=pre+Math.round(c)+suf;if(c>=val)clearInterval(t);},step);
+      }
+    }
+    card.addEventListener('mouseenter',()=>{tooltip.textContent=card.dataset.tip;tooltip.style.display='block';});
+    card.addEventListener('mousemove',e=>{tooltip.style.left=Math.min(e.clientX+14,window.innerWidth-220)+'px';tooltip.style.top=(e.clientY-36)+'px';});
+    card.addEventListener('mouseleave',()=>{tooltip.style.display='none';});
+  });
+}
+initStats();
 </script>
 </body></html>
