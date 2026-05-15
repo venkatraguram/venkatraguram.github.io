@@ -1,17 +1,29 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html><html lang="en" data-theme="dark">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Supervisor Workspace</title>
+<script>
+  // Sync theme immediately before paint
+  (function(){const t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+</script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#090d0e;--bg2:#0e1416;--bg3:#141d1f;--card:#0e1a1c;--border:#1a2e30;--txt:#dff4f4;--txt2:#8ab8bc;--txt3:#527478;--accent:#00c9c8;--accent2:#00e5b0;--warn:#f59e0b;--danger:#ef4444;--ok:#22c55e;--purple:#a78bfa}
-body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans-serif;font-size:12px;height:100vh;display:flex;flex-direction:column;overflow:hidden}
-
-/* TOP BAR */
-.topbar{height:40px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 10px;gap:8px;flex-shrink:0}
+[data-theme="dark"]{
+  --bg:#090d0e;--bg2:#0e1416;--bg3:#141d1f;--card:#0e1a1c;--border:#1a2e30;
+  --txt:#dff4f4;--txt2:#8ab8bc;--txt3:#527478;
+  --accent:#00c9c8;--accent2:#00e5b0;--warn:#f59e0b;--danger:#ef4444;--ok:#22c55e;--purple:#a78bfa;
+  --shadow:rgba(0,0,0,.4);--nav-bg:rgba(9,13,14,0.95);
+}
+[data-theme="light"]{
+  --bg:#f0f7f7;--bg2:#ffffff;--bg3:#e4f0f0;--card:#ffffff;--border:#b8dede;
+  --txt:#0e2a2a;--txt2:#2d6b6b;--txt3:#6b9a9a;
+  --accent:#007e7d;--accent2:#009e7a;--warn:#c47a00;--danger:#c0392b;--ok:#1a7a3a;--purple:#6d5fd4;
+  --shadow:rgba(0,100,100,.12);--nav-bg:rgba(255,255,255,0.95);
+}
+body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans-serif;font-size:12px;height:100vh;display:flex;flex-direction:column;overflow:hidden;transition:background .2s,color .2s}
+.topbar{height:44px;background:var(--nav-bg);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 12px;gap:8px;flex-shrink:0}
 .logo{font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.06em;white-space:nowrap}
-.divv{width:1px;height:18px;background:var(--border);flex-shrink:0}
-.shift-chip{padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;background:#051e1e;color:var(--accent);border:1px solid #0a4040;white-space:nowrap}
-.stat-pills{display:flex;gap:4px}
+.divv{width:1px;height:18px;background:var(--border)}
+.shift-chip{padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;background:var(--bg3);color:var(--accent);border:1px solid var(--border)}
 .sp{padding:2px 8px;border-radius:10px;font-size:10px;background:var(--bg3);border:1px solid var(--border);color:var(--txt2);white-space:nowrap}
 .sp b{color:var(--txt)}
 .sp.ok b{color:var(--accent2)}
@@ -20,19 +32,22 @@ body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans
 .live-dot{width:6px;height:6px;border-radius:50%;background:var(--ok);animation:blink 1.4s infinite;flex-shrink:0}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
 .search-wrap{flex:1;position:relative;max-width:240px;margin-left:2px}
-.search-wrap input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:4px 8px 4px 24px;color:var(--txt);font-size:11px;font-family:inherit;outline:none;transition:border-color .15s}
+.search-wrap input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:4px 8px 4px 24px;color:var(--txt);font-size:11px;font-family:inherit;outline:none}
 .search-wrap input:focus{border-color:var(--accent)}
 .si{position:absolute;left:8px;top:50%;transform:translateY(-50%);color:var(--txt3);font-size:11px}
 .tb-right{margin-left:auto;display:flex;gap:5px;align-items:center}
-.tb-btn{padding:3px 10px;border-radius:4px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--txt2);white-space:nowrap;transition:all .15s}
+.tb-btn{padding:3px 10px;border-radius:4px;font-size:11px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--txt2);transition:all .15s}
 .tb-btn:hover{border-color:var(--accent);color:var(--accent)}
-.tb-btn-p{background:var(--accent);color:#090d0e;border-color:var(--accent);font-weight:700}
+.tb-btn-p{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:700}
+.theme-toggle{width:32px;height:18px;border-radius:9px;background:var(--border);border:none;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;padding:0}
+.theme-toggle::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--accent);transition:transform .2s}
+[data-theme="light"] .theme-toggle::after{transform:translateX(14px)}
+.back-btn{padding:3px 10px;border-radius:4px;font-size:11px;cursor:pointer;border:1px solid var(--border);background:var(--bg3);color:var(--txt2);text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+.back-btn:hover{border-color:var(--accent);color:var(--accent)}
 
-/* BODY */
 .body-wrap{display:flex;flex:1;overflow:hidden}
-
-/* LEFT CHAT SIDEBAR */
-.csb{width:215px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;transition:width .18s;overflow:hidden}
+/* CHAT SIDEBAR */
+.csb{width:215px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;transition:width .18s,background .2s;overflow:hidden}
 .csb.closed{width:32px}
 .csb-head{height:32px;display:flex;align-items:center;padding:0 8px;border-bottom:1px solid var(--border);gap:6px;flex-shrink:0}
 .csb-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--txt3);white-space:nowrap;overflow:hidden;flex:1}
@@ -42,14 +57,14 @@ body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans
 .agent-list{padding:4px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:2px;flex-shrink:0}
 .at{display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:4px;cursor:pointer;border:1px solid transparent;transition:all .12s}
 .at:hover{background:var(--bg3)}
-.at.active{background:#051e1e;border-color:#0a4040}
+.at.active{background:var(--bg3);border-color:var(--accent)}
 .at-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
 .at-name{font-size:11px;color:var(--txt2);white-space:nowrap}
 .at.active .at-name{color:var(--accent)}
 .chat-body{flex:1;overflow-y:auto;padding:5px;display:flex;flex-direction:column;gap:4px}
 .msg{padding:6px 8px;border-radius:5px;font-size:11px;line-height:1.45}
 .msg.a{background:var(--bg3);border-left:2px solid var(--accent)}
-.msg.u{background:#051e1e;border-left:2px solid var(--txt3)}
+.msg.u{background:var(--bg3);border-left:2px solid var(--txt3)}
 .msg-from{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
 .msg-from.a{color:var(--accent)}
 .msg-from.u{color:var(--txt3)}
@@ -57,17 +72,16 @@ body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans
 .chat-in{display:flex;gap:4px;padding:5px;border-top:1px solid var(--border);flex-shrink:0}
 .chat-in input{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:4px 7px;color:var(--txt);font-size:11px;font-family:inherit;outline:none;min-width:0}
 .chat-in input:focus{border-color:var(--accent)}
-.chat-in button{background:var(--accent);color:#090d0e;border:none;border-radius:4px;padding:4px 8px;font-weight:700;cursor:pointer;font-size:11px}
+.chat-in button{background:var(--accent);color:#fff;border:none;border-radius:4px;padding:4px 8px;font-weight:700;cursor:pointer;font-size:11px}
 
-/* MAIN GRID - 4 AGENT PANELS */
+/* MAIN GRID */
 .main-grid{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:5px;padding:5px;overflow:hidden;min-width:0}
-.panel{background:var(--card);border:1px solid var(--border);border-radius:7px;display:flex;flex-direction:column;overflow:hidden;min-width:0;min-height:0}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:7px;display:flex;flex-direction:column;overflow:hidden;transition:background .2s,border-color .2s}
 .ph{height:30px;padding:0 8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;flex-shrink:0;background:var(--bg2);cursor:pointer;user-select:none}
 .ph:hover{background:var(--bg3)}
-.ph-icon{font-size:12px}
 .ph-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--txt2)}
 .ph-badge{margin-left:auto;font-size:9px;padding:1px 6px;border-radius:8px;font-weight:600}
-.ph-chev{font-size:10px;color:var(--txt3);margin-left:3px;transition:transform .15s}
+.ph-chev{font-size:10px;color:var(--txt3);margin-left:3px}
 .panel.collapsed .ph-chev{transform:rotate(-90deg)}
 .panel.collapsed .pb{display:none}
 .pb{flex:1;overflow-y:auto;padding:5px}
@@ -75,72 +89,57 @@ body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans
 /* ROWS */
 .row{display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:4px;cursor:pointer;border:1px solid transparent;transition:all .12s;margin-bottom:3px}
 .row:hover{background:var(--bg3);border-color:var(--border)}
-.row.sel{background:#051e1e;border-color:var(--accent)}
+.row.sel{background:var(--bg3);border-color:var(--accent)}
 .row-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .row-main{flex:1;min-width:0}
 .row-title{font-size:11px;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .row-sub{font-size:10px;color:var(--txt3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.row-end{flex-shrink:0}
-
-/* DETAIL */
 .det{display:none;margin:0 3px 5px;padding:7px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:5px;font-size:11px;color:var(--txt2);line-height:1.5}
 .det.open{display:block}
 .det strong{color:var(--txt)}
 .dl{display:flex;justify-content:space-between;margin-bottom:3px;font-size:11px}
 .dl span{color:var(--txt3)}
 .dl strong{color:var(--txt)}
-.ai-note{margin-top:5px;padding:4px 7px;background:#1a1530;border-left:2px solid var(--purple);border-radius:0 4px 4px 0;font-size:10px;color:var(--purple)}
+.ai-note{margin-top:5px;padding:4px 7px;background:var(--bg);border-left:2px solid var(--purple);border-radius:0 4px 4px 0;font-size:10px;color:var(--purple)}
 .det-actions{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
 .da{padding:3px 9px;border-radius:4px;font-size:10px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
-.da.ok{background:var(--ok);color:#090d0e}
-.da.w{background:var(--warn);color:#090d0e}
+.da.ok{background:var(--ok);color:#fff}
+.da.w{background:var(--warn);color:#fff}
 .da.g{background:var(--bg);color:var(--txt2);border:1px solid var(--border)}
 .da.g:hover{border-color:var(--accent);color:var(--accent)}
-
-/* SPARKLINE */
 .spark{height:24px;display:flex;align-items:flex-end;gap:2px;margin-top:4px}
 .bar{border-radius:2px 2px 0 0;flex:1;min-width:3px}
-
-/* SECTION LABEL */
 .slabel{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--txt3);padding:2px 4px;margin-bottom:3px}
-
-/* BADGES */
-.b{padding:1px 6px;border-radius:8px;font-size:9px;font-weight:700;display:inline-block;white-space:nowrap}
-.b-ok{background:#052010;color:var(--ok)}
-.b-w{background:#1c1205;color:var(--warn)}
-.b-d{background:#1a0505;color:var(--danger)}
-.b-i{background:#051e1e;color:var(--accent)}
-.b-p{background:#1a1530;color:var(--purple)}
+.b{padding:1px 6px;border-radius:8px;font-size:9px;font-weight:700;display:inline-block}
+.b-ok{background:var(--bg3);color:var(--ok);border:1px solid var(--ok)}
+.b-w{background:var(--bg3);color:var(--warn);border:1px solid var(--warn)}
+.b-d{background:var(--bg3);color:var(--danger);border:1px solid var(--danger)}
+.b-i{background:var(--bg3);color:var(--accent);border:1px solid var(--accent)}
 
 /* RIGHT SIDEBAR */
-.rsb{width:220px;background:var(--bg2);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
+.rsb{width:220px;background:var(--bg2);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;transition:background .2s}
 .rsb-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
 .rtab{flex:1;padding:7px 4px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--txt3);cursor:pointer;text-align:center;border-bottom:2px solid transparent;transition:all .15s}
 .rtab:hover{color:var(--txt2)}
 .rtab.active{color:var(--accent);border-bottom-color:var(--accent)}
 .rsb-body{flex:1;overflow-y:auto;padding:6px;display:flex;flex-direction:column;gap:5px}
 .rsb-body.hidden{display:none}
-
-/* ACTIONS */
-.ac{border-radius:5px;padding:6px 7px;border-left:3px solid;margin-bottom:0}
-.ac.p1{background:#160404;border-color:var(--danger)}
-.ac.p2{background:#161004;border-color:var(--warn)}
-.ac.p3{background:#041414;border-color:var(--accent)}
+.ac{border-radius:5px;padding:6px 7px;border-left:3px solid}
+.ac.p1{background:var(--bg3);border-color:var(--danger)}
+.ac.p2{background:var(--bg3);border-color:var(--warn)}
+.ac.p3{background:var(--bg3);border-color:var(--accent)}
 .ac-p{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
 .p1 .ac-p{color:var(--danger)}
 .p2 .ac-p{color:var(--warn)}
 .p3 .ac-p{color:var(--accent)}
 .ac-t{font-size:11px;color:var(--txt);line-height:1.35;margin-bottom:2px}
 .ac-m{font-size:10px;color:var(--txt3);margin-bottom:3px}
-.ac-btn{display:inline-flex;align-items:center;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
-.ac-btn.ok{background:var(--ok);color:#090d0e}
-.ac-btn.w{background:var(--warn);color:#090d0e}
+.ac-btn{display:inline-flex;align-items:center;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:600;cursor:pointer;border:none}
+.ac-btn.ok{background:var(--ok);color:#fff}
+.ac-btn.w{background:var(--warn);color:#fff}
 .ac-btn.g{background:var(--bg3);color:var(--txt2);border:1px solid var(--border)}
-.ac-btn.g:hover{border-color:var(--accent);color:var(--accent)}
-
-/* COMMS */
 .comm-msg{padding:6px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:5px;margin-bottom:5px}
-.comm-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
+.comm-hdr{display:flex;justify-content:space-between;margin-bottom:3px}
 .comm-from{font-size:10px;font-weight:600;color:var(--txt)}
 .comm-time{font-size:10px;color:var(--txt3)}
 .comm-txt{font-size:11px;color:var(--txt2);line-height:1.4}
@@ -149,33 +148,28 @@ body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans
 .comm-input-wrap textarea{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:5px 7px;color:var(--txt);font-size:11px;font-family:inherit;outline:none;resize:none;height:52px;width:100%}
 .comm-input-wrap textarea:focus{border-color:var(--accent)}
 .comm-btns{display:flex;gap:4px}
-.comm-btn{flex:1;padding:4px;border-radius:4px;font-size:10px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--bg3);color:var(--txt2);transition:all .15s}
-.comm-btn.p{background:var(--accent);color:#090d0e;border-color:var(--accent)}
-.comm-btn:hover{border-color:var(--accent);color:var(--accent)}
-
-/* SHIFT REPORT */
+.comm-btn{flex:1;padding:4px;border-radius:4px;font-size:10px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--bg3);color:var(--txt2)}
+.comm-btn.p{background:var(--accent);color:#fff;border-color:var(--accent)}
 .sr-block{background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:7px 8px;margin-bottom:5px}
 .sr-block h4{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--txt2);margin-bottom:5px}
 .sr-row{display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px}
 .sr-row span{color:var(--txt3)}
 .sr-row strong{color:var(--txt)}
 .sr-txt{font-size:11px;color:var(--txt2);line-height:1.5}
-.gen-btn{margin:5px;padding:7px;background:var(--accent);color:#090d0e;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;flex-shrink:0}
-.gen-btn:hover{background:#00b0af}
+.gen-btn{margin:5px;padding:7px;background:var(--accent);color:#fff;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;flex-shrink:0}
 </style>
 </head>
 <body>
 
-<!-- TOP BAR -->
 <div class="topbar">
   <span class="logo">MFG Cloud</span>
   <div class="divv"></div>
   <span class="shift-chip">Day Shift · Line 3 &amp; 4</span>
   <div class="live-dot"></div>
-  <div class="stat-pills">
+  <div style="display:flex;gap:4px">
     <span class="sp ok"><b>87%</b> OEE L3</span>
     <span class="sp ok"><b>92%</b> OEE L4</span>
-    <span class="sp w"><b>74%</b> Sched. att.</span>
+    <span class="sp w"><b>74%</b> Sched.</span>
     <span class="sp d"><b>2</b> Exceptions</span>
     <span class="sp d"><b>1</b> Anomaly</span>
     <span class="sp"><b>12</b> Operators</span>
@@ -185,14 +179,16 @@ body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans
     <input placeholder="Ask supervisor agent…" id="orch-in" onkeydown="if(event.key==='Enter')orchQ()">
   </div>
   <div class="tb-right">
-    <button class="tb-btn" onclick="switchRTab('report')">📋 Shift Report</button>
+    <button class="tb-btn" onclick="switchRTab('report')">📋 Report</button>
     <button class="tb-btn tb-btn-p" onclick="switchRTab('comms')">📢 Comms</button>
+    <span id="theme-icon" style="font-size:13px">🌙</span>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme"></button>
+    <a href="index.html" class="back-btn">← Portfolio</a>
   </div>
 </div>
 
 <div class="body-wrap">
-
-<!-- LEFT CHAT SIDEBAR -->
+<!-- CHAT SIDEBAR -->
 <div class="csb" id="csb">
   <div class="csb-head">
     <span class="csb-label">Agent Chat</span>
@@ -200,19 +196,19 @@ body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans
   </div>
   <div class="csb-inner" id="csb-inner">
     <div class="agent-list">
-      <div class="at active" onclick="switchAgent(this,'Orchestrator','All systems nominal on Line 4. Line 3 has a hydraulic press fault since 09:48 — WO-3341 paused. I recommend reassigning J. Reyes to Line 4 WO-3350 while the press is repaired. Two high-priority exceptions need your attention.')">
+      <div class="at active" onclick="switchAgent(this,'Orchestrator','All systems nominal on Line 4. Line 3 has a hydraulic press fault since 09:48 — WO-3341 paused. I recommend reassigning J. Reyes to Line 4 WO-3350 while the press is repaired.')">
         <div class="at-dot" style="background:var(--accent)"></div><span class="at-name">✦ Orchestrator</span>
       </div>
-      <div class="at" onclick="switchAgent(this,'Assignment Agent','3 operators are available: M. Chen (best match for Step 6 hold point — GxP certified), L. Park (Lines 3–5 qualified), K. Nair (machining certified). I recommend assigning M. Chen to Step 6 immediately — ETA to station: 8 min.')">
+      <div class="at" onclick="switchAgent(this,'Assignment','3 operators available: M. Chen (best match for Step 6 — GxP certified), L. Park (Lines 3–5 qualified), K. Nair (machining certified).')">
         <div class="at-dot" style="background:var(--accent2)"></div><span class="at-name">✦ Assignment</span>
       </div>
-      <div class="at" onclick="switchAgent(this,'Exception Agent','Two high-priority exceptions open: (1) Line 3 hydraulic press fault — WO-3341 paused, root cause likely sensor P-12 calibration. (2) NCR-441 impeller shaft Ra OOS — 4 downstream units at risk, CAPA draft ready.')">
+      <div class="at" onclick="switchAgent(this,'Exceptions','Two high-priority exceptions: (1) Line 3 hydraulic press fault — WO-3341 paused. (2) NCR-441 impeller shaft Ra OOS — 4 units at risk, CAPA draft ready.')">
         <div class="at-dot" style="background:var(--danger)"></div><span class="at-name">✦ Exceptions</span>
       </div>
-      <div class="at" onclick="switchAgent(this,'Anomaly Agent','Pressure sensor P-12 on Line 3 has been reading 48.2 bar vs spec 52–58 bar for 36 minutes. Pattern matches a March 2024 fault resolved by sensor recalibration. Recommend dispatching maintenance now.')">
+      <div class="at" onclick="switchAgent(this,'Anomaly','Pressure sensor P-12 on Line 3 has been reading 48.2 bar vs spec 52–58 for 36 min. Pattern matches March 2024 fault. Recommend dispatching maintenance now.')">
         <div class="at-dot" style="background:var(--warn)"></div><span class="at-name">✦ Anomaly</span>
       </div>
-      <div class="at" onclick="switchAgent(this,'Work Order Agent','WO-3341 on Line 3 is paused due to press fault — 18 min delay cascading to WO-3342. WO-3350 and WO-3351 on Line 4 are on track. I can reschedule WO-3342 start to 14:40 and adjust downstream queue automatically.')">
+      <div class="at" onclick="switchAgent(this,'Work Orders','WO-3341 paused — press fault. WO-3342 delayed 18 min. WO-3350 and WO-3351 on Line 4 are on track. I can reschedule WO-3342 to 14:40 automatically.')">
         <div class="at-dot" style="background:var(--purple)"></div><span class="at-name">✦ Work Orders</span>
       </div>
     </div>
@@ -226,218 +222,86 @@ body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans
   </div>
 </div>
 
-<!-- MAIN 4-PANEL GRID -->
+<!-- 4 PANELS -->
 <div class="main-grid">
 
-  <!-- PANEL 1: OPERATIONS ASSIGNMENT -->
   <div class="panel" id="p1">
     <div class="ph" onclick="togglePanel('p1')">
-      <span class="ph-icon">👷</span>
+      <span style="font-size:12px">👷</span>
       <span class="ph-title">Operations Assignment</span>
-      <span class="ph-badge b-w">3 available</span>
-      <span class="ph-chev">▾</span>
+      <span class="ph-badge b-w">3 available</span><span class="ph-chev">▾</span>
     </div>
     <div class="pb">
-      <div class="slabel">Assigned — 9 operators</div>
-      <div class="row sel" onclick="expandRow(this,'d1a')">
-        <div class="row-dot" style="background:var(--accent)"></div>
-        <div class="row-main"><div class="row-title">J. Reyes — Step 4 · Line 3 · WO-3341</div><div class="row-sub">Torque spec · GxP certified</div></div>
-        <span class="b b-w">Paused</span>
-      </div>
-      <div class="det open" id="d1a">
-        <div class="dl"><span>Current task</span><strong>WO-3341 · Impeller shaft install</strong></div>
-        <div class="dl"><span>Status</span><strong style="color:var(--warn)">Paused — press fault</strong></div>
-        <div class="dl"><span>Skills</span><strong>Torque spec · GxP · 21 CFR</strong></div>
-        <div class="ai-note">✦ AI: Reassign to Line 4 WO-3350 while press repaired — skill match confirmed.</div>
-        <div class="det-actions"><button class="da ok" onclick="acceptDet(this,'J. Reyes reassigned to WO-3350')">✓ Reassign to WO-3350</button><button class="da g">View schedule</button></div>
-      </div>
-      <div class="row" onclick="expandRow(this,'d1b')">
-        <div class="row-dot" style="background:var(--ok)"></div>
-        <div class="row-main"><div class="row-title">A. Singh — Leak test · Line 3 · WO-3342</div><div class="row-sub">Pressure test · QMS</div></div>
-        <span class="b b-ok">Active</span>
-      </div>
-      <div class="det" id="d1b"><div class="dl"><span>Task</span><strong>Hydrostatic leak test · WO-3342</strong></div><div class="dl"><span>ETC</span><strong style="color:var(--warn)">14:40 (18 min delay)</strong></div><div class="ai-note">✦ AI: Delay cascading from press fault. No reassignment needed — test in progress.</div></div>
-      <div class="row" onclick="expandRow(this,'d1c')">
-        <div class="row-dot" style="background:var(--ok)"></div>
-        <div class="row-main"><div class="row-title">T. Okafor — Bearing press · Line 4 · WO-3350</div><div class="row-sub">Press ops · Metrology</div></div>
-        <span class="b b-ok">Active</span>
-      </div>
-      <div class="det" id="d1c"><div class="dl"><span>Task</span><strong>Bearing press · WO-3350</strong></div><div class="dl"><span>ETC</span><strong>13:10 on track</strong></div></div>
+      <div class="slabel">Assigned</div>
+      <div class="row sel" onclick="expandRow(this,'d1a')"><div class="row-dot" style="background:var(--accent)"></div><div class="row-main"><div class="row-title">J. Reyes — Step 4 · Line 3 · WO-3341</div><div class="row-sub">Torque spec · GxP certified</div></div><span class="b b-w">Paused</span></div>
+      <div class="det open" id="d1a"><div class="dl"><span>Status</span><strong style="color:var(--warn)">Paused — press fault</strong></div><div class="dl"><span>Skills</span><strong>Torque spec · GxP · 21 CFR</strong></div><div class="ai-note">✦ AI: Reassign to Line 4 WO-3350 while press repaired.</div><div class="det-actions"><button class="da ok" onclick="acceptDet(this,'J. Reyes reassigned')">✓ Reassign</button><button class="da g">View schedule</button></div></div>
+      <div class="row" onclick="expandRow(this,'d1b')"><div class="row-dot" style="background:var(--ok)"></div><div class="row-main"><div class="row-title">A. Singh — Leak test · Line 3</div><div class="row-sub">Pressure test · QMS</div></div><span class="b b-ok">Active</span></div>
+      <div class="det" id="d1b"><div class="dl"><span>ETC</span><strong style="color:var(--warn)">14:40 (18 min delay)</strong></div><div class="ai-note">✦ AI: Delay from press fault. No reassignment needed.</div></div>
+      <div class="row" onclick="expandRow(this,'d1c')"><div class="row-dot" style="background:var(--ok)"></div><div class="row-main"><div class="row-title">T. Okafor — Bearing press · Line 4</div><div class="row-sub">Press ops · Metrology</div></div><span class="b b-ok">Active</span></div>
+      <div class="det" id="d1c"><div class="dl"><span>ETC</span><strong>13:10 on track</strong></div></div>
       <div class="slabel" style="margin-top:6px">Available — AI suggested</div>
-      <div class="row" onclick="expandRow(this,'d1d')">
-        <div class="row-dot" style="background:var(--accent2)"></div>
-        <div class="row-main"><div class="row-title">M. Chen — Unassigned · Seal assembly cert.</div><div class="row-sub">Mech. seal · GxP · 21 CFR</div></div>
-        <span class="b b-i">Best match</span>
-      </div>
-      <div class="det" id="d1d"><div class="dl"><span>Best for</span><strong>Step 6 GxP hold point</strong></div><div class="dl"><span>Qualifications</span><strong>Mech. seal · GxP · 21 CFR ✓</strong></div><div class="ai-note">✦ AI: Only certified operator available for Step 6. Assign now — ETA 8 min.</div><div class="det-actions"><button class="da ok" onclick="acceptDet(this,'M. Chen assigned to Step 6')">✓ Assign to Step 6</button></div></div>
-      <div class="row" onclick="expandRow(this,'d1e')">
-        <div class="row-dot" style="background:var(--warn)"></div>
-        <div class="row-main"><div class="row-title">L. Park — Unassigned · Lines 3–5</div><div class="row-sub">Assembly · Inspection</div></div>
-        <span class="b b-w">Available</span>
-      </div>
-      <div class="det" id="d1e"><div class="dl"><span>Qualified lines</span><strong>Lines 3, 4, 5</strong></div><div class="dl"><span>Skills</span><strong>Assembly · Inspection</strong></div><div class="ai-note">✦ AI: No urgent assignment needed. Available as buffer.</div></div>
+      <div class="row" onclick="expandRow(this,'d1d')"><div class="row-dot" style="background:var(--accent2)"></div><div class="row-main"><div class="row-title">M. Chen — Unassigned · Seal cert.</div><div class="row-sub">Mech. seal · GxP · 21 CFR</div></div><span class="b b-i">Best match</span></div>
+      <div class="det" id="d1d"><div class="dl"><span>Best for</span><strong>Step 6 GxP hold point</strong></div><div class="ai-note">✦ AI: Only certified operator for Step 6. Assign now — ETA 8 min.</div><div class="det-actions"><button class="da ok" onclick="acceptDet(this,'M. Chen assigned')">✓ Assign</button></div></div>
+      <div class="row" onclick="expandRow(this,'d1e')"><div class="row-dot" style="background:var(--warn)"></div><div class="row-main"><div class="row-title">L. Park — Unassigned · Lines 3–5</div><div class="row-sub">Assembly · Inspection</div></div><span class="b b-w">Available</span></div>
+      <div class="det" id="d1e"><div class="dl"><span>Qualified lines</span><strong>Lines 3, 4, 5</strong></div><div class="ai-note">✦ AI: Available as buffer — no urgent assignment.</div></div>
     </div>
   </div>
 
-  <!-- PANEL 2: EXCEPTION TRIAGING -->
   <div class="panel" id="p2">
     <div class="ph" onclick="togglePanel('p2')">
-      <span class="ph-icon">⚠️</span>
+      <span style="font-size:12px">⚠️</span>
       <span class="ph-title">Exception Triaging</span>
-      <span class="ph-badge b-d">2 high priority</span>
-      <span class="ph-chev">▾</span>
+      <span class="ph-badge b-d">2 high priority</span><span class="ph-chev">▾</span>
     </div>
     <div class="pb">
       <div class="slabel">High priority</div>
-      <div class="row sel" onclick="expandRow(this,'d2a')">
-        <div class="row-dot" style="background:var(--danger)"></div>
-        <div class="row-main"><div class="row-title">Line 3 — Hydraulic press fault</div><div class="row-sub">WO-3341 paused · 09:48 · 36 min open</div></div>
-        <span class="b b-d">High</span>
-      </div>
-      <div class="det open" id="d2a">
-        <div class="dl"><span>Fault code</span><strong>HYD-P12-OOR</strong></div>
-        <div class="dl"><span>Sensor reading</span><strong style="color:var(--danger)">48.2 bar (spec 52–58)</strong></div>
-        <div class="dl"><span>Est. resolution</span><strong>25 min · Maintenance dispatched</strong></div>
-        <div class="ai-note">✦ AI: Matches March 2024 fault — sensor P-12 calibration. Inspect sensor and hydraulic fluid level.</div>
-        <div class="det-actions"><button class="da ok" onclick="acceptDet(this,'Maintenance confirmed')">✓ Confirm maintenance</button><button class="da g">View history</button></div>
-      </div>
-      <div class="row" onclick="expandRow(this,'d2b')">
-        <div class="row-dot" style="background:var(--danger)"></div>
-        <div class="row-main"><div class="row-title">NCR-441 — Impeller shaft Ra OOS</div><div class="row-sub">LOT-IS-2024-771 · 4 units at risk</div></div>
-        <span class="b b-d">High</span>
-      </div>
-      <div class="det" id="d2b">
-        <div class="dl"><span>Defect</span><strong>Ra 1.8 µm · max spec 1.6 µm</strong></div>
-        <div class="dl"><span>Units at risk</span><strong style="color:var(--danger)">4 downstream units</strong></div>
-        <div class="dl"><span>CAPA status</span><strong style="color:var(--warn)">Draft ready — QA pending</strong></div>
-        <div class="ai-note">✦ AI: Hold lot immediately. Initiate CAPA. Notify QA Manager S. Kim.</div>
-        <div class="det-actions"><button class="da w" onclick="acceptDet(this,'Lot held · QA notified')">Hold lot &amp; notify QA</button><button class="da g">View CAPA</button></div>
-      </div>
-      <div class="slabel" style="margin-top:5px">Medium priority</div>
-      <div class="row" onclick="expandRow(this,'d2c')">
-        <div class="row-dot" style="background:var(--warn)"></div>
-        <div class="row-main"><div class="row-title">WO-3342 behind schedule — 18 min</div><div class="row-sub">Line 3 · Cascaded from press fault</div></div>
-        <span class="b b-w">Med</span>
-      </div>
-      <div class="det" id="d2c"><div class="dl"><span>Delay</span><strong>18 min · cascaded from WO-3341</strong></div><div class="dl"><span>New ETC</span><strong>14:40</strong></div><div class="ai-note">✦ AI: Reschedule WO-3342 to 14:40 and auto-adjust downstream queue.</div><div class="det-actions"><button class="da ok" onclick="acceptDet(this,'Schedule updated')">✓ Auto-reschedule</button></div></div>
-      <div class="row" onclick="expandRow(this,'d2d')">
-        <div class="row-dot" style="background:var(--warn)"></div>
-        <div class="row-main"><div class="row-title">Step 6 hold point — QA not on floor</div><div class="row-sub">Line 3 · ETA 12 min</div></div>
-        <span class="b b-w">Med</span>
-      </div>
-      <div class="det" id="d2d"><div class="dl"><span>Hold point</span><strong>Step 6 · GxP required</strong></div><div class="dl"><span>QA status</span><strong style="color:var(--danger)">Not on floor</strong></div><div class="ai-note">✦ AI: Page S. Kim (QA Mgr) now — 12 min window before hold point reached.</div><div class="det-actions"><button class="da w" onclick="acceptDet(this,'S. Kim paged')">Page S. Kim</button></div></div>
-      <div class="slabel" style="margin-top:5px">Resolved</div>
-      <div class="row" style="opacity:.45">
-        <div class="row-dot" style="background:var(--ok)"></div>
-        <div class="row-main"><div class="row-title">Torque wrench T-12 calibration</div><div class="row-sub">Resolved 08:30 · Tool replaced</div></div>
-        <span class="b b-ok">Resolved</span>
-      </div>
+      <div class="row sel" onclick="expandRow(this,'d2a')"><div class="row-dot" style="background:var(--danger)"></div><div class="row-main"><div class="row-title">Line 3 — Hydraulic press fault</div><div class="row-sub">WO-3341 paused · 09:48 · 36 min open</div></div><span class="b b-d">High</span></div>
+      <div class="det open" id="d2a"><div class="dl"><span>Sensor reading</span><strong style="color:var(--danger)">48.2 bar (spec 52–58)</strong></div><div class="dl"><span>Est. resolution</span><strong>25 min · Maintenance dispatched</strong></div><div class="ai-note">✦ AI: Sensor P-12 calibration — matches March 2024 fault.</div><div class="det-actions"><button class="da ok" onclick="acceptDet(this,'Maintenance confirmed')">✓ Confirm</button><button class="da g">View history</button></div></div>
+      <div class="row" onclick="expandRow(this,'d2b')"><div class="row-dot" style="background:var(--danger)"></div><div class="row-main"><div class="row-title">NCR-441 — Impeller shaft Ra OOS</div><div class="row-sub">LOT-IS-2024-771 · 4 units at risk</div></div><span class="b b-d">High</span></div>
+      <div class="det" id="d2b"><div class="dl"><span>Defect</span><strong>Ra 1.8 µm · max 1.6 µm</strong></div><div class="dl"><span>CAPA</span><strong style="color:var(--warn)">Draft ready — QA pending</strong></div><div class="ai-note">✦ AI: Hold lot, initiate CAPA, notify QA Manager S. Kim.</div><div class="det-actions"><button class="da w" onclick="acceptDet(this,'Lot held · QA notified')">Hold lot &amp; notify QA</button></div></div>
+      <div class="slabel" style="margin-top:5px">Medium</div>
+      <div class="row" onclick="expandRow(this,'d2c')"><div class="row-dot" style="background:var(--warn)"></div><div class="row-main"><div class="row-title">WO-3342 behind schedule — 18 min</div><div class="row-sub">Line 3 · Cascaded from press fault</div></div><span class="b b-w">Med</span></div>
+      <div class="det" id="d2c"><div class="dl"><span>New ETC</span><strong>14:40</strong></div><div class="ai-note">✦ AI: Auto-reschedule WO-3342 and adjust downstream queue.</div><div class="det-actions"><button class="da ok" onclick="acceptDet(this,'Schedule updated')">✓ Auto-reschedule</button></div></div>
+      <div class="row" onclick="expandRow(this,'d2d')"><div class="row-dot" style="background:var(--warn)"></div><div class="row-main"><div class="row-title">Step 6 hold point — QA not on floor</div><div class="row-sub">Line 3 · ETA 12 min</div></div><span class="b b-w">Med</span></div>
+      <div class="det" id="d2d"><div class="dl"><span>QA status</span><strong style="color:var(--danger)">Not on floor</strong></div><div class="ai-note">✦ AI: Page S. Kim now — 12 min window before hold point.</div><div class="det-actions"><button class="da w" onclick="acceptDet(this,'S. Kim paged')">Page S. Kim</button></div></div>
     </div>
   </div>
 
-  <!-- PANEL 3: ANOMALY DETECTION -->
   <div class="panel" id="p3">
     <div class="ph" onclick="togglePanel('p3')">
-      <span class="ph-icon">📡</span>
+      <span style="font-size:12px">📡</span>
       <span class="ph-title">Anomaly Detection</span>
-      <span class="ph-badge b-d">1 active</span>
-      <span class="ph-chev">▾</span>
+      <span class="ph-badge b-d">1 active</span><span class="ph-chev">▾</span>
     </div>
     <div class="pb">
       <div class="slabel">Active anomalies</div>
-      <div class="row sel" onclick="expandRow(this,'d3a')">
-        <div class="row-dot" style="background:var(--danger)"></div>
-        <div class="row-main"><div class="row-title">P-12 Pressure — Line 3 Hydraulic Press</div><div class="row-sub">48.2 bar · spec 52–58 · 36 min</div></div>
-        <span class="b b-d">Anomaly</span>
-      </div>
-      <div class="det open" id="d3a">
-        <div class="dl"><span>Current</span><strong style="color:var(--danger)">48.2 bar</strong></div>
-        <div class="dl"><span>Spec</span><strong>52–58 bar</strong></div>
-        <div class="dl"><span>Duration</span><strong>36 min</strong></div>
-        <div class="dl"><span>Pattern match</span><strong>Mar 2024 fault (sensor cal.)</strong></div>
-        <div class="spark" id="spark-p12"></div>
-        <div class="ai-note">✦ AI: Sensor drift pattern. Inspect P-12 calibration and hydraulic fluid level. Est. fix: 25 min.</div>
-      </div>
-      <div class="slabel" style="margin-top:6px">Monitored — normal</div>
-      <div class="row" onclick="expandRow(this,'d3b')">
-        <div class="row-dot" style="background:var(--ok)"></div>
-        <div class="row-main"><div class="row-title">Temp — Line 4 Seal Press Zone</div><div class="row-sub">68°C · spec 60–75°C</div></div>
-        <span class="b b-ok">Normal</span>
-      </div>
-      <div class="det" id="d3b">
-        <div class="dl"><span>Current</span><strong>68°C</strong></div>
-        <div class="dl"><span>Spec</span><strong>60–75°C</strong></div>
-        <div class="spark" id="spark-tmp"></div>
-        <div class="ai-note">✦ AI: Stable. No action required.</div>
-      </div>
-      <div class="row" onclick="expandRow(this,'d3c')">
-        <div class="row-dot" style="background:var(--ok)"></div>
-        <div class="row-main"><div class="row-title">Vibration — Line 4 Bearing Press</div><div class="row-sub">2.1 mm/s · spec &lt;4.0</div></div>
-        <span class="b b-ok">Normal</span>
-      </div>
-      <div class="det" id="d3c">
-        <div class="dl"><span>Current</span><strong>2.1 mm/s</strong></div>
-        <div class="dl"><span>Spec</span><strong>&lt;4.0 mm/s</strong></div>
-        <div class="spark" id="spark-vib"></div>
-        <div class="ai-note">✦ AI: Within normal range. No action required.</div>
-      </div>
-      <div class="row" onclick="expandRow(this,'d3d')">
-        <div class="row-dot" style="background:var(--ok)"></div>
-        <div class="row-main"><div class="row-title">Spindle load — Line 4 CNC-04</div><div class="row-sub">7.6A · baseline 7.5A</div></div>
-        <span class="b b-ok">Normal</span>
-      </div>
-      <div class="det" id="d3d"><div class="dl"><span>Current</span><strong>7.6A</strong></div><div class="dl"><span>Baseline</span><strong>7.5A</strong></div><div class="ai-note">✦ AI: Normal. Tool life at 68% — no alert.</div></div>
+      <div class="row sel" onclick="expandRow(this,'d3a')"><div class="row-dot" style="background:var(--danger)"></div><div class="row-main"><div class="row-title">P-12 Pressure — Line 3 Hydraulic Press</div><div class="row-sub">48.2 bar · spec 52–58 · 36 min</div></div><span class="b b-d">Anomaly</span></div>
+      <div class="det open" id="d3a"><div class="dl"><span>Current</span><strong style="color:var(--danger)">48.2 bar</strong></div><div class="dl"><span>Spec</span><strong>52–58 bar</strong></div><div class="dl"><span>Duration</span><strong>36 min</strong></div><div class="spark" id="spark-p12"></div><div class="ai-note">✦ AI: Sensor drift. Inspect P-12 calibration and hydraulic fluid. Est. fix: 25 min.</div></div>
+      <div class="slabel" style="margin-top:6px">Normal</div>
+      <div class="row" onclick="expandRow(this,'d3b')"><div class="row-dot" style="background:var(--ok)"></div><div class="row-main"><div class="row-title">Temp — Line 4 Seal Press Zone</div><div class="row-sub">68°C · spec 60–75°C</div></div><span class="b b-ok">Normal</span></div>
+      <div class="det" id="d3b"><div class="dl"><span>Current</span><strong>68°C</strong></div><div class="dl"><span>Spec</span><strong>60–75°C</strong></div><div class="spark" id="spark-tmp"></div><div class="ai-note">✦ AI: Stable. No action required.</div></div>
+      <div class="row" onclick="expandRow(this,'d3c')"><div class="row-dot" style="background:var(--ok)"></div><div class="row-main"><div class="row-title">Vibration — Line 4 Bearing Press</div><div class="row-sub">2.1 mm/s · spec &lt;4.0</div></div><span class="b b-ok">Normal</span></div>
+      <div class="det" id="d3c"><div class="dl"><span>Current</span><strong>2.1 mm/s</strong></div><div class="spark" id="spark-vib"></div><div class="ai-note">✦ AI: Normal range. No action required.</div></div>
     </div>
   </div>
 
-  <!-- PANEL 4: WORK ORDER MANAGEMENT -->
   <div class="panel" id="p4">
     <div class="ph" onclick="togglePanel('p4')">
-      <span class="ph-icon">📋</span>
+      <span style="font-size:12px">📋</span>
       <span class="ph-title">Work Order Management</span>
-      <span class="ph-badge b-w">1 paused · 1 delayed</span>
-      <span class="ph-chev">▾</span>
+      <span class="ph-badge b-w">1 paused · 1 delayed</span><span class="ph-chev">▾</span>
     </div>
     <div class="pb">
       <div class="slabel">Line 3</div>
-      <div class="row sel" onclick="expandRow(this,'d4a')">
-        <div class="row-dot" style="background:var(--danger)"></div>
-        <div class="row-main"><div class="row-title">WO-3341 — Pump Assembly · Step 4</div><div class="row-sub">J. Reyes · Press fault · Paused</div></div>
-        <span class="b b-d">Paused</span>
-      </div>
-      <div class="det open" id="d4a">
-        <div class="dl"><span>Product</span><strong>Pump Assembly</strong></div>
-        <div class="dl"><span>Step</span><strong>4 — Impeller shaft install</strong></div>
-        <div class="dl"><span>Blocked by</span><strong style="color:var(--danger)">Hydraulic press fault</strong></div>
-        <div class="dl"><span>Est. resume</span><strong>~10:45 (25 min)</strong></div>
-        <div class="ai-note">✦ AI: Resume automatically when press is cleared. J. Reyes reassigned to WO-3350 in the interim.</div>
-        <div class="det-actions"><button class="da g" onclick="acceptDet(this,'Auto-resume set')">Set auto-resume</button></div>
-      </div>
-      <div class="row" onclick="expandRow(this,'d4b')">
-        <div class="row-dot" style="background:var(--warn)"></div>
-        <div class="row-main"><div class="row-title">WO-3342 — Pump Assembly · Leak test</div><div class="row-sub">A. Singh · 18 min delay</div></div>
-        <span class="b b-w">Delayed</span>
-      </div>
-      <div class="det" id="d4b"><div class="dl"><span>Step</span><strong>7 — Hydrostatic leak test</strong></div><div class="dl"><span>Original ETC</span><strong>14:22</strong></div><div class="dl"><span>Revised ETC</span><strong style="color:var(--warn)">14:40</strong></div><div class="ai-note">✦ AI: Downstream queue auto-adjusted. No operator change needed.</div><div class="det-actions"><button class="da ok" onclick="acceptDet(this,'Schedule confirmed')">✓ Confirm reschedule</button></div></div>
-      <div class="row" onclick="expandRow(this,'d4c')">
-        <div class="row-dot" style="background:var(--txt3)"></div>
-        <div class="row-main"><div class="row-title">WO-3343 — Pump Assembly · Queued</div><div class="row-sub">Unassigned · Starts after WO-3342</div></div>
-        <span class="b" style="background:var(--bg3);color:var(--txt3)">Queued</span>
-      </div>
-      <div class="det" id="d4c"><div class="dl"><span>Start (revised)</span><strong>15:20</strong></div><div class="ai-note">✦ AI: Auto-adjusted from 15:02. L. Park is available to pre-stage materials.</div></div>
+      <div class="row sel" onclick="expandRow(this,'d4a')"><div class="row-dot" style="background:var(--danger)"></div><div class="row-main"><div class="row-title">WO-3341 — Pump Assembly · Step 4</div><div class="row-sub">J. Reyes · Press fault · Paused</div></div><span class="b b-d">Paused</span></div>
+      <div class="det open" id="d4a"><div class="dl"><span>Blocked by</span><strong style="color:var(--danger)">Hydraulic press fault</strong></div><div class="dl"><span>Est. resume</span><strong>~10:45</strong></div><div class="ai-note">✦ AI: Auto-resume when press cleared. J. Reyes reassigned to WO-3350 interim.</div><div class="det-actions"><button class="da g" onclick="acceptDet(this,'Auto-resume set')">Set auto-resume</button></div></div>
+      <div class="row" onclick="expandRow(this,'d4b')"><div class="row-dot" style="background:var(--warn)"></div><div class="row-main"><div class="row-title">WO-3342 — Pump Assembly · Leak test</div><div class="row-sub">A. Singh · 18 min delay</div></div><span class="b b-w">Delayed</span></div>
+      <div class="det" id="d4b"><div class="dl"><span>Revised ETC</span><strong style="color:var(--warn)">14:40</strong></div><div class="ai-note">✦ AI: Downstream queue auto-adjusted. No operator change needed.</div><div class="det-actions"><button class="da ok" onclick="acceptDet(this,'Schedule confirmed')">✓ Confirm</button></div></div>
       <div class="slabel" style="margin-top:5px">Line 4</div>
-      <div class="row" onclick="expandRow(this,'d4d')">
-        <div class="row-dot" style="background:var(--ok)"></div>
-        <div class="row-main"><div class="row-title">WO-3350 — Valve Assembly</div><div class="row-sub">T. Okafor · On track · ETC 13:10</div></div>
-        <span class="b b-ok">On track</span>
-      </div>
-      <div class="det" id="d4d"><div class="dl"><span>ETC</span><strong>13:10 ✓</strong></div><div class="dl"><span>OEE</span><strong style="color:var(--accent2)">92%</strong></div><div class="ai-note">✦ AI: No action needed.</div></div>
-      <div class="row" onclick="expandRow(this,'d4e')">
-        <div class="row-dot" style="background:var(--ok)"></div>
-        <div class="row-main"><div class="row-title">WO-3351 — Valve Assembly</div><div class="row-sub">L. Park · On track · ETC 14:50</div></div>
-        <span class="b b-ok">On track</span>
-      </div>
-      <div class="det" id="d4e"><div class="dl"><span>ETC</span><strong>14:50 ✓</strong></div><div class="ai-note">✦ AI: No action needed.</div></div>
+      <div class="row" onclick="expandRow(this,'d4c')"><div class="row-dot" style="background:var(--ok)"></div><div class="row-main"><div class="row-title">WO-3350 — Valve Assembly</div><div class="row-sub">T. Okafor · On track · ETC 13:10</div></div><span class="b b-ok">On track</span></div>
+      <div class="det" id="d4c"><div class="dl"><span>OEE</span><strong style="color:var(--accent2)">92%</strong></div><div class="ai-note">✦ AI: No action needed.</div></div>
+      <div class="row" onclick="expandRow(this,'d4d')"><div class="row-dot" style="background:var(--ok)"></div><div class="row-main"><div class="row-title">WO-3351 — Valve Assembly</div><div class="row-sub">L. Park · On track · ETC 14:50</div></div><span class="b b-ok">On track</span></div>
+      <div class="det" id="d4d"><div class="dl"><span>ETC</span><strong>14:50 ✓</strong></div><div class="ai-note">✦ AI: No action needed.</div></div>
     </div>
   </div>
 
@@ -450,8 +314,6 @@ body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans
     <div class="rtab" id="rt-comms" onclick="switchRTab('comms')">Comms</div>
     <div class="rtab" id="rt-report" onclick="switchRTab('report')">Report</div>
   </div>
-
-  <!-- ACTIONS TAB -->
   <div class="rsb-body" id="rsb-actions">
     <div class="ac p1"><div class="ac-p">🔴 Immediate</div><div class="ac-t">Hold impeller shaft lot — 4 units at risk</div><div class="ac-m">NCR-441 · K. Nair</div><button class="ac-btn ok" onclick="doneAc(this,'Hold confirmed')">✓ Confirm</button></div>
     <div class="ac p1"><div class="ac-p">🔴 Immediate</div><div class="ac-t">Reassign J. Reyes to WO-3350</div><div class="ac-m">While Line 3 press repaired</div><button class="ac-btn ok" onclick="doneAc(this,'Reassigned')">✓ Accept</button></div>
@@ -460,24 +322,19 @@ body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans
     <div class="ac p3"><div class="ac-p">🔵 Today</div><div class="ac-t">Dispatch maintenance to P-12 sensor</div><div class="ac-m">Line 3 · Calibration check</div><button class="ac-btn g" onclick="doneAc(this,'Dispatched')">Dispatch</button></div>
     <div class="ac p3"><div class="ac-p">🔵 Today</div><div class="ac-t">Auto-reschedule WO-3342 → 14:40</div><div class="ac-m">Adjust downstream queue</div><button class="ac-btn g" onclick="doneAc(this,'Rescheduled')">Apply</button></div>
   </div>
-
-  <!-- COMMS TAB -->
   <div class="rsb-body hidden" id="rsb-comms">
     <div class="comm-msg"><div class="comm-hdr"><span class="comm-from">S. Kim — QA Manager</span><span class="comm-time">09:52</span></div><div class="comm-txt">Reviewing NCR-441. Need Ra re-inspection results before disposition. Can you hold all 6 units?</div><span class="comm-tag b-d">QA · Urgent</span></div>
-    <div class="comm-msg"><div class="comm-hdr"><span class="comm-from">Maintenance — R. Diaz</span><span class="comm-time">10:05</span></div><div class="comm-txt">En route to Line 3. P-12 inspection starting in 10 min. Will update on estimated repair time.</div><span class="comm-tag b-i">Maintenance</span></div>
-    <div class="comm-msg"><div class="comm-hdr"><span class="comm-from">T. Okafor — Operator</span><span class="comm-time">10:18</span></div><div class="comm-txt">WO-3350 bearing press complete. Ready for next assignment.</div><span class="comm-tag b-ok">Info</span></div>
-    <div class="comm-msg"><div class="comm-hdr"><span class="comm-from">✦ AI — Shift Summary</span><span class="comm-time">10:24</span></div><div class="comm-txt">Line 3 running at reduced capacity. ETA to full recovery: ~25 min. Line 4 nominal. 2 open exceptions require supervisor sign-off.</div><span class="comm-tag b-p">AI · Auto</span></div>
+    <div class="comm-msg"><div class="comm-hdr"><span class="comm-from">Maintenance — R. Diaz</span><span class="comm-time">10:05</span></div><div class="comm-txt">En route to Line 3. P-12 inspection starting in 10 min.</div><span class="comm-tag b-i">Maintenance</span></div>
+    <div class="comm-msg"><div class="comm-hdr"><span class="comm-from">✦ AI — Shift Summary</span><span class="comm-time">10:24</span></div><div class="comm-txt">Line 3 at reduced capacity. ETA full recovery: ~25 min. Line 4 nominal. 2 exceptions need supervisor sign-off.</div><span class="comm-tag" style="background:var(--bg3);color:var(--purple);border:1px solid var(--purple)">AI · Auto</span></div>
   </div>
   <div class="comm-input-wrap hidden" id="comm-input-wrap">
-    <textarea placeholder="Broadcast message or reply…" id="comm-txt"></textarea>
+    <textarea placeholder="Broadcast or reply…" id="comm-txt"></textarea>
     <div class="comm-btns">
-      <button class="comm-btn" onclick="sendComm('QA Team')">→ QA</button>
-      <button class="comm-btn" onclick="sendComm('Maintenance')">→ Maint.</button>
+      <button class="comm-btn" onclick="sendComm('QA')">→ QA</button>
+      <button class="comm-btn" onclick="sendComm('Maint.')">→ Maint.</button>
       <button class="comm-btn p" onclick="sendComm('All')">Broadcast</button>
     </div>
   </div>
-
-  <!-- REPORT TAB -->
   <div class="rsb-body hidden" id="rsb-report">
     <div class="sr-block"><h4>Production Summary</h4>
       <div class="sr-row"><span>Units completed</span><strong>24 / 30</strong></div>
@@ -486,35 +343,45 @@ body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans
       <div class="sr-row"><span>Schedule att.</span><strong style="color:var(--warn)">74%</strong></div>
     </div>
     <div class="sr-block"><h4>Key Events</h4>
-      <div class="sr-txt">• 09:48 — Line 3 press fault. WO-3341 paused. J. Reyes reassigned.<br>• 10:05 — NCR-441 raised. 4 units held. CAPA drafted.<br>• 10:18 — Step 6 hold point alert. S. Kim paged.</div>
+      <div class="sr-txt">• 09:48 — Line 3 press fault. WO-3341 paused.<br>• 10:05 — NCR-441 raised. 4 units held.<br>• 10:18 — Step 6 hold point alert. S. Kim paged.</div>
     </div>
     <div class="sr-block"><h4>Handoff Notes</h4>
-      <div class="sr-txt">Incoming supervisor: (1) Monitor Line 3 press repair — ETA 10:45. (2) Await QA sign-off on NCR-441 hold. (3) Confirm M. Chen at Step 6 hold point.</div>
+      <div class="sr-txt">Monitor Line 3 press repair ETA ~10:45. Await QA sign-off NCR-441. Confirm M. Chen at Step 6.</div>
     </div>
   </div>
   <button class="gen-btn hidden" id="gen-report-btn" onclick="genReport()">✦ Generate Full Shift Report</button>
 </div>
-
 </div>
 
 <script>
+// Theme
+function toggleTheme(){
+  const html=document.documentElement;
+  const next=html.getAttribute('data-theme')==='dark'?'light':'dark';
+  html.setAttribute('data-theme',next);
+  document.getElementById('theme-icon').textContent=next==='dark'?'🌙':'☀️';
+  localStorage.setItem('theme',next);
+}
+// Sync icon on load
+(function(){
+  const t=document.documentElement.getAttribute('data-theme');
+  document.getElementById('theme-icon').textContent=t==='dark'?'🌙':'☀️';
+})();
+
 // Sparklines
 function spark(id,vals,color){
   const el=document.getElementById(id);if(!el)return;
   const mx=Math.max(...vals);
   vals.forEach(v=>{const b=document.createElement('div');b.className='bar';b.style.height=Math.round((v/mx)*22)+'px';b.style.background=color;b.style.opacity='.75';el.appendChild(b);});
 }
-spark('spark-p12',[55,54,53,51,50,49,47,48,47,46,48,47,48,48,48],'#ef4444');
-spark('spark-tmp',[64,65,67,68,68,69,67,68,70,69,68,67,69,70,68],'#22c55e');
-spark('spark-vib',[1.8,2.0,2.1,1.9,2.0,2.2,2.1,1.9,2.0,2.1,2.0,2.2,2.1,2.0,2.1],'#00e5b0');
+spark('spark-p12',[55,54,53,51,50,49,47,48,47,46,48,47,48,48,48],'var(--danger)');
+spark('spark-tmp',[64,65,67,68,68,69,67,68,70,69,68,67,69,70,68],'var(--ok)');
+spark('spark-vib',[1.8,2.0,2.1,1.9,2.0,2.2,2.1,1.9,2.0,2.1,2.0,2.2,2.1,2.0,2.1],'var(--accent2)');
 
-// Left sidebar
 function toggleCSB(){
   const s=document.getElementById('csb'),b=document.getElementById('csb-btn'),i=document.getElementById('csb-inner');
   const c=s.classList.toggle('closed');b.textContent=c?'▶':'◀';i.style.display=c?'none':'flex';
 }
-
-// Agent chat
 function switchAgent(el,name,msg){
   document.querySelectorAll('.at').forEach(a=>a.classList.remove('active'));el.classList.add('active');addMsg('a',name,msg);
 }
@@ -522,24 +389,16 @@ function sendChat(){
   const inp=document.getElementById('chat-in'),v=inp.value.trim();if(!v)return;
   const ag=document.querySelector('.at.active .at-name').textContent.replace('✦ ','');
   addMsg('u','You',v);inp.value='';
-  const r={
-    'line 3':'Line 3 has a hydraulic press fault since 09:48 — sensor P-12 reading 48.2 bar vs spec 52–58. Maintenance en route. WO-3341 paused, J. Reyes reassigned.',
-    'assign':'M. Chen is the best match for Step 6 — GxP and 21 CFR certified, available now, ETA to station 8 min.',
-    'exception':'Two high-priority exceptions: (1) Line 3 press fault — sensor P-12. (2) NCR-441 impeller shaft Ra OOS — 4 units held pending QA.',
-    'anomal':'Pressure sensor P-12 on Line 3 has been drifting low for 36 min. Pattern matches a March 2024 fault. Recommend immediate maintenance dispatch.',
-    'work order':'WO-3341 paused. WO-3342 delayed 18 min. WO-3350 and 3351 on Line 4 are on track. Downstream queue auto-adjusted.',
-    'report':'Shift summary ready: 24/30 units, OEE 87%/92%, 2 open exceptions, 3 urgent actions pending sign-off.',
-  };
+  const r={'line 3':'Line 3 press fault since 09:48 — sensor P-12 reading 48.2 bar vs spec 52–58. WO-3341 paused, J. Reyes reassigned.','assign':'M. Chen is the best match for Step 6 — GxP and 21 CFR certified, available now, ETA 8 min.','exception':'Two high-priority exceptions: (1) Line 3 press fault. (2) NCR-441 Ra OOS — 4 units held pending QA.','work order':'WO-3341 paused. WO-3342 delayed 18 min. WO-3350 and 3351 on track.'};
   const k=Object.keys(r).find(k=>v.toLowerCase().includes(k));
-  setTimeout(()=>addMsg('a',ag,k?r[k]:'Analyzing current shift data… Recommend focusing on Line 3 recovery and NCR-441 lot hold as top priorities.'),500);
+  setTimeout(()=>addMsg('a',ag,k?r[k]:'Reviewing shift data… Recommend prioritizing Line 3 recovery and NCR-441 lot hold first.'),500);
 }
 function orchQ(){
   const inp=document.getElementById('orch-in'),v=inp.value.trim();if(!v)return;inp.value='';
-  // Open sidebar if closed
   const csb=document.getElementById('csb');
   if(csb.classList.contains('closed')){csb.classList.remove('closed');document.getElementById('csb-btn').textContent='◀';document.getElementById('csb-inner').style.display='flex';}
   addMsg('u','You',v);
-  setTimeout(()=>addMsg('a','Orchestrator','Routing across all agents… Line 3 at reduced capacity — press fault, ETA 25 min. NCR-441 CAPA drafted, awaiting QA. 3 urgent actions pending your confirmation. Schedule attainment 74% — recoverable if press restored by 10:45.'),500);
+  setTimeout(()=>addMsg('a','Orchestrator','Line 3 at reduced capacity — press fault, ETA 25 min. NCR-441 CAPA drafted, awaiting QA. 3 urgent actions pending your confirmation. Schedule attainment 74% — recoverable if press restored by 10:45.'),500);
 }
 function addMsg(role,from,txt){
   const b=document.getElementById('chat-body');
@@ -547,11 +406,7 @@ function addMsg(role,from,txt){
   d.innerHTML=`<div class="msg-from ${role}">${from}</div><div class="msg-txt">${txt}</div>`;
   b.appendChild(d);b.scrollTop=b.scrollHeight;
 }
-
-// Panel toggle
 function togglePanel(id){document.getElementById(id).classList.toggle('collapsed')}
-
-// Row expand
 function expandRow(row,detId){
   const pb=row.closest('.pb');
   pb.querySelectorAll('.row').forEach(r=>r.classList.remove('sel'));
@@ -561,44 +416,23 @@ function expandRow(row,detId){
   pb.querySelectorAll('.det').forEach(x=>x.classList.remove('open'));
   if(!was)d.classList.add('open');
 }
-
-function acceptDet(btn,label){
-  btn.textContent='✓ '+label;btn.disabled=true;btn.style.opacity='.5';
-  addMsg('a','Orchestrator','Action logged: '+label+'. Audit trail updated.');
-}
-
-// Right tabs
+function acceptDet(btn,label){btn.textContent='✓ '+label;btn.disabled=true;btn.style.opacity='.5';addMsg('a','Orchestrator','Logged: '+label+'. Audit trail updated.');}
 function switchRTab(tab){
-  ['actions','comms','report'].forEach(t=>{
-    document.getElementById('rsb-'+t).classList.add('hidden');
-    document.getElementById('rt-'+t).classList.remove('active');
-  });
+  ['actions','comms','report'].forEach(t=>{document.getElementById('rsb-'+t).classList.add('hidden');document.getElementById('rt-'+t).classList.remove('active');});
   document.getElementById('rsb-'+tab).classList.remove('hidden');
   document.getElementById('rt-'+tab).classList.add('active');
-  const ci=document.getElementById('comm-input-wrap');
-  const gb=document.getElementById('gen-report-btn');
-  ci.classList.toggle('hidden',tab!=='comms');
-  gb.classList.toggle('hidden',tab!=='report');
+  document.getElementById('comm-input-wrap').classList.toggle('hidden',tab!=='comms');
+  document.getElementById('gen-report-btn').classList.toggle('hidden',tab!=='report');
 }
-
-// Comms
 function sendComm(to){
   const txt=document.getElementById('comm-txt').value.trim();if(!txt)return;
   const b=document.getElementById('rsb-comms');
   const d=document.createElement('div');d.className='comm-msg';
-  d.innerHTML=`<div class="comm-hdr"><span class="comm-from">You → ${to}</span><span class="comm-time">Now</span></div><div class="comm-txt">${txt}</div><span class="comm-tag b-i">Sent</span>`;
+  d.innerHTML=`<div class="comm-hdr"><span class="comm-from">You → ${to}</span><span class="comm-time">Now</span></div><div class="comm-txt">${txt}</div>`;
   b.appendChild(d);b.scrollTop=b.scrollHeight;document.getElementById('comm-txt').value='';
 }
-
-// Actions
-function doneAc(btn,label){
-  const c=btn.closest('.ac');c.style.opacity='.4';btn.textContent='✓ '+label;btn.disabled=true;
-  addMsg('a','Orchestrator','Logged: '+label+'.');
-}
-
-function genReport(){addMsg('a','Orchestrator','Full shift report generated and ready for e-signature. Summary: 24/30 units, OEE 87%/92%, 2 NCRs, 3 actions completed. Handoff notes drafted.');}
-
-// Init sidebar
+function doneAc(btn,label){btn.closest('.ac').style.opacity='.4';btn.textContent='✓ '+label;btn.disabled=true;addMsg('a','Orchestrator','Logged: '+label+'.');}
+function genReport(){addMsg('a','Orchestrator','Full shift report generated. Summary: 24/30 units, OEE 87%/92%, 2 NCRs, 3 actions completed. Ready for e-signature.');}
 document.getElementById('csb-inner').style.cssText='display:flex;flex-direction:column;flex:1;overflow:hidden';
 </script>
 </body></html>
