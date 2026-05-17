@@ -182,6 +182,62 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justi
 .footer-links a{font-size:12px;color:var(--txt3);cursor:pointer}
 .footer-links a:hover{color:var(--txt)}
 
+/* ── MOBILE ── */
+.mob-menu-btn{display:none;background:none;border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--txt2);cursor:pointer;font-size:16px;line-height:1}
+@media(max-width:720px){
+  nav{padding:0 1rem;gap:8px}
+  .nav-name{font-size:13px}
+  .nav-links{display:none;position:fixed;top:56px;left:0;right:0;background:var(--bg2);border-bottom:1px solid var(--border);flex-direction:column;padding:1rem;gap:0;z-index:99}
+  .nav-links.open{display:flex}
+  .nav-links a{padding:.75rem 0;border-bottom:1px solid var(--border);font-size:14px;color:var(--txt2)}
+  .nav-links a:last-of-type{border-bottom:none}
+  .resume-btn{margin-top:.5rem;justify-content:center}
+  .theme-toggle-wrap{flex-direction:row;justify-content:space-between;padding:.75rem 0;border-top:1px solid var(--border);margin-top:.25rem}
+  .mob-menu-btn{display:block}
+  /* hero */
+  .hero{padding:4rem 0 2rem}
+  h1{font-size:1.8rem}
+  .hero-sub{font-size:.95rem}
+  .hero-btns{flex-direction:column;gap:8px}
+  .hero-btns .btn{justify-content:center;width:100%}
+  .hero-meta{gap:.75rem}
+  .stats-grid{grid-template-columns:repeat(2,1fr);gap:8px;margin-top:2rem}
+  .stat-num{font-size:1.4rem}
+  /* carousel */
+  .carousel-card{flex-direction:column;gap:12px;padding:14px}
+  .carousel-icon{font-size:1.5rem}
+  .carousel-title{font-size:.9rem}
+  .carousel-desc{font-size:12px}
+  .carousel-num{display:none}
+  .carousel-arrow.prev{left:-10px}
+  .carousel-arrow.next{right:-10px}
+  /* about */
+  .about-grid{grid-template-columns:1fr}
+  .avatar{max-width:160px;margin:0 auto}
+  /* skills */
+  .skills-grid{grid-template-columns:1fr}
+  /* projects */
+  .proj-outcome{gap:8px}
+  .outcome-pill{padding:5px 8px}
+  .outcome-pill strong{font-size:13px}
+  /* experience */
+  .exp-header{padding:1rem}
+  .exp-body{padding:0 1rem 1rem}
+  /* contact */
+  .contact-grid{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+  /* section spacing */
+  section{padding:2.5rem 0}
+  h2{font-size:1.3rem}
+  /* footer */
+  footer{flex-direction:column;gap:.75rem;text-align:center}
+  .footer-links{flex-wrap:wrap;justify-content:center;gap:1rem}
+  /* home preview */
+  .home-preview{grid-template-columns:1fr}
+  /* disclaimer */
+  .disclaimer{flex-direction:column;gap:6px}
+}
+
 /* DISCLAIMER */
 .disclaimer{display:flex;align-items:flex-start;gap:8px;background:var(--hero-tag-bg);border:1px solid var(--hero-tag-border);border-left:3px solid var(--accent);border-radius:6px;padding:9px 12px;margin-bottom:1.5rem}
 </style>
@@ -190,19 +246,20 @@ footer{border-top:1px solid var(--border);padding:1.5rem 2rem;display:flex;justi
 
 <nav>
   <span class="nav-name" onclick="go('home')">Venkatraman Raguraman</span>
-  <div class="nav-links">
-    <a onclick="go('home')" id="nl-home" class="active">Home</a>
-    <a onclick="go('about')" id="nl-about">About</a>
-    <a onclick="go('skills')" id="nl-skills">Skills</a>
-    <a onclick="go('experience')" id="nl-experience">Experience</a>
-    <a onclick="go('projects')" id="nl-projects">Projects</a>
-    <a onclick="go('contact')" id="nl-contact">Contact</a>
-    <a href="resume.pdf" download="Venkatraman_Raguraman_Resume.pdf" class="resume-btn">↓ Resume</a>
+  <div class="nav-links" id="nav-links">
+    <a onclick="go('home');closeNav()" id="nl-home" class="active">Home</a>
+    <a onclick="go('about');closeNav()" id="nl-about">About</a>
+    <a onclick="go('skills');closeNav()" id="nl-skills">Skills</a>
+    <a onclick="go('experience');closeNav()" id="nl-experience">Experience</a>
+    <a onclick="go('projects');closeNav()" id="nl-projects">Projects</a>
+    <a onclick="go('contact');closeNav()" id="nl-contact">Contact</a>
+    <a href="resume.pdf" download="Venkatraman_Raguraman_Resume.pdf" class="resume-btn" onclick="closeNav()">↓ Resume</a>
     <div class="theme-toggle-wrap">
       <span class="theme-icon" id="theme-icon">🌙</span>
       <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode"></button>
     </div>
   </div>
+  <button class="mob-menu-btn" onclick="toggleNav()" id="mob-btn">☰</button>
 </nav>
 
 <!-- HOME -->
